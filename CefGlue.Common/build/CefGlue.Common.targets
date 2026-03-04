@@ -73,11 +73,12 @@
      Relies on ResolvePackageAssets MSBuild target to identify resources deployed from that specific package. -->
     <Target Name="ResolveCEFAssets" Condition="$([MSBuild]::IsOSPlatform('Windows')) and '$(CefGlueTargetPlatform)' != ''" AfterTargets="ResolvePackageAssets">
         <ItemGroup Condition="'$(CefGlueTargetPlatform)' == 'win-x64' OR '$(CefGlueTargetPlatform)' == 'win-arm64'">
-            <CefRuntimeFiles Include="@(RuntimeTargetsCopyLocalItems->WithMetadataValue('NuGetPackageId', 'chromiumembeddedframework.runtime.$(CefGlueTargetPlatform)'))" />
-            <None Include="@(CefRuntimeFiles)">
+			<CefRuntimeFiles Include="@(CefRedist64)" Condition="'$(CefGlueTargetPlatform)' == 'win-x64'" />
+			<CefRuntimeFiles Include="@(CefRedistArm64)" Condition="'$(CefGlueTargetPlatform)' == 'win-arm64'" />
+			<None Include="@(CefRuntimeFiles)">
                 <Visible>false</Visible>
-                <Link>$(OutputDirectory)%(FileName)%(Extension)</Link>
-                <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+				<Link>$(OutputDirectory)%(RecursiveDir)%(FileName)%(Extension)</Link>
+				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
                 <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
                 <PublishState>Included</PublishState>
             </None>
