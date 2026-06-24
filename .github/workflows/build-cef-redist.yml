@@ -138,8 +138,8 @@ jobs:
           cp "$FW/Resources/"* out/CEF/Resources/ 2>/dev/null || true
           cp "$FW/Resources/en.lproj/"* out/CEF/Resources/ 2>/dev/null || true
 
-      - name: Extract API hash (osxarm64 only, same hash for x64)
-        if: matrix.id == 'osxarm64'
+      - name: Extract API hash (osx64 only, same hash for arm64)
+        if: matrix.id == 'osx64'
         run: |
           python3 -c "
           import ctypes
