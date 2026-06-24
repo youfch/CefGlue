@@ -18,11 +18,11 @@ on:
 
 jobs:
   build-linux:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         arch: [linux64, linuxarm64]
-    runs-on: ubuntu-latest
     steps:
       - name: Install cross-strip for ARM64
         if: matrix.arch == 'linuxarm64'
@@ -31,6 +31,7 @@ jobs:
       - name: Download CEF
         run: |
           URL="https://cef-builds.spotifycdn.com/cef_binary_${{ inputs.cef_version }}%2B${{ inputs.commit_hash }}%2Bchromium-${{ inputs.chromium_version }}_${{ matrix.arch }}_minimal.tar.bz2"
+          echo "Downloading: $URL"
           curl -L -o cef.tar.bz2 "$URL"
 
       - name: Extract CEF
@@ -47,35 +48,42 @@ jobs:
           STRIP="strip"
           [ "${{ matrix.arch }}" = "linuxarm64" ] && STRIP="aarch64-linux-gnu-strip"
           for so in out/CEF/*.so; do
-            [ -f "$so" ] && [ ! -L "$so" ] && $STRIP -s "$so" || true
+            [ -f "$so" ] && [ ! -L "$so" ] && echo "Stripping $(basename $so)" && $STRIP -s "$so" || true
           done
 
-      - name: Extract API hash (linux64 only)
-        if: matrix.arch == 'linux64'
+      - name: Extract API hash
         run: |
           python3 -c "
-          import ctypes
-          lib = ctypes.CDLL('out/CEF/libcef.so')
+          import ctypes, os
+          lib = ctypes.CDLL(os.path.join('out', 'CEF', 'libcef.so'))
           lib.cef_api_hash.argtypes = [ctypes.c_int, ctypes.c_int]
           lib.cef_api_hash.restype = ctypes.c_char_p
+          # Must call cef_api_hash first to configure the API version
           h = lib.cef_api_hash(14900, 0)
-          print(f'LINUX_HASH={h.decode()}')
+          print(f'HASH=${{ matrix.arch }}={h.decode()}')
           with open('api_hash.txt', 'w') as f: f.write(h.decode())
           "
 
       - name: Create NuGet package
         run: |
+          # Create .csproj-based package using dotnet pack
           mkdir -p pkg && cd pkg
           dotnet new classlib -n cef.redist.${{ matrix.arch }} --no-restore -f netstandard2.0
           cd cef.redist.${{ matrix.arch }}
+          
+          # Remove default Class1.cs
           rm -f Class1.cs
+          
+          # Move CEF files into the project
           mv ../../out/CEF .
+          
+          # Create nuspec
           cat > cef.redist.${{ matrix.arch }}.nuspec << NUSPEC
           <?xml version="1.0"?>
           <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
             <metadata>
               <id>cef.redist.\$id\$</id>
-              <version>${{ inputs.cef_version }}</version>
+              <version>\$version\$</version>
               <authors>The Chromium Embedded Framework Authors</authors>
               <requireLicenseAcceptance>false</requireLicenseAcceptance>
               <description>CEF - the Chromium Embedded Framework.</description>
@@ -85,11 +93,14 @@ jobs:
             </metadata>
           </package>
           NUSPEC
+          
+          # Modify .csproj for packing
           cat > cef.redist.${{ matrix.arch }}.csproj << CSPROJ
           <Project Sdk="Microsoft.NET.Sdk">
             <PropertyGroup>
               <TargetFramework>netstandard2.0</TargetFramework>
               <NuspecFile>cef.redist.${{ matrix.arch }}.nuspec</NuspecFile>
+              <NuspecProperties>id=${{ matrix.arch }};version=${{ inputs.cef_version }}</NuspecProperties>
               <IncludeBuildOutput>false</IncludeBuildOutput>
               <NoDefaultExcludes>true</NoDefaultExcludes>
             </PropertyGroup>
@@ -98,7 +109,8 @@ jobs:
             </ItemGroup>
           </Project>
           CSPROJ
-          dotnet pack --output ../.. -c Release -p:NuspecProperties="id=${{ matrix.arch }};version=${{ inputs.cef_version }}"
+          
+          dotnet pack --output ../.. -c Release
           cd ../..
           rm -rf pkg
 
@@ -125,6 +137,7 @@ jobs:
       - name: Download CEF
         run: |
           URL="https://cef-builds.spotifycdn.com/cef_binary_${{ inputs.cef_version }}%2B${{ inputs.commit_hash }}%2Bchromium-${{ inputs.chromium_version }}_${{ matrix.cef_arch }}_minimal.tar.bz2"
+          echo "Downloading: $URL"
           curl -L -o cef.tar.bz2 "$URL"
 
       - name: Extract CEF
@@ -138,16 +151,15 @@ jobs:
           cp "$FW/Resources/"* out/CEF/Resources/ 2>/dev/null || true
           cp "$FW/Resources/en.lproj/"* out/CEF/Resources/ 2>/dev/null || true
 
-      - name: Extract API hash (osx64 only, same hash for arm64)
-        if: matrix.id == 'osx64'
+      - name: Extract API hash
         run: |
           python3 -c "
-          import ctypes
-          lib = ctypes.CDLL('out/CEF/libcef.dylib')
+          import ctypes, os
+          lib = ctypes.CDLL(os.path.join('out', 'CEF', 'libcef.dylib'))
           lib.cef_api_hash.argtypes = [ctypes.c_int, ctypes.c_int]
           lib.cef_api_hash.restype = ctypes.c_char_p
           h = lib.cef_api_hash(14900, 0)
-          print(f'MACOS_HASH={h.decode()}')
+          print(f'HASH=${{ matrix.id }}={h.decode()}')
           with open('api_hash.txt', 'w') as f: f.write(h.decode())
           "
 
@@ -197,18 +209,7 @@ jobs:
           path: packages
           merge-multiple: true
 
-      - name: Extract API hashes
-        run: |
-          echo "### API Hashes" >> /tmp/release-notes
-          echo '```' >> /tmp/release-notes
-          for f in packages/api_hash.txt; do
-            if [ -f "$f" ]; then
-              echo "Hash from $f: $(cat $f)" >> /tmp/release-notes
-            fi
-          done
-          echo '```' >> /tmp/release-notes
-          find packages -name "*.nupkg" -exec ls -lh {} \;
-          find packages -name "api_hash.txt" -exec cat {} \;
+      - run: find packages -name "*.nupkg" -exec ls -lh {} \;
 
       - uses: softprops/action-gh-release@v2
         with:
@@ -217,15 +218,13 @@ jobs:
           body: |
             CEF redistributable NuGet packages for ${{ inputs.cef_version }}
             (CEF ${{ inputs.cef_version }}+${{ inputs.commit_hash }}+chromium-${{ inputs.chromium_version }})
-
+            
             | Package | Platform |
             |---------|----------|
             | `cef.redist.linux64` | Linux x64 |
             | `cef.redist.linuxarm64` | Linux ARM64 |
             | `cef.redist.osx64` | macOS x64 (Intel) |
             | `cef.redist.osxarm64` | macOS ARM64 (Apple Silicon) |
-
+            
             Add as local NuGet source then reference in `Directory.Packages.props`.
-
-            > **API hashes**: See the `api_hash.txt` files in the artifacts for `CEF_API_HASH_PLATFORM_LINUX` and `CEF_API_HASH_PLATFORM_MACOS`.
           files: packages/*.nupkg
