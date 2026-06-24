@@ -4,7 +4,7 @@
         <DotnetVersion>net8.0</DotnetVersion>
         <LangVersion>latest</LangVersion>
         <AvaloniaVersion>11.0.9</AvaloniaVersion>
-        <CefRedistVersion>145.0.26</CefRedistVersion>
+        <CefRedistVersion>149.0.4</CefRedistVersion>
         <CefRedistOSXVersion>134.3.9</CefRedistOSXVersion>
         <CefRedistLinuxVersion>134.3.9</CefRedistLinuxVersion>
         <Platforms>x64;ARM64</Platforms>
@@ -13,7 +13,7 @@
 
     <PropertyGroup>
         <PackageOutputPath>$(MSBuildProjectDirectory)\..\Nuget\output</PackageOutputPath>
-        <Version>134.6998.178</Version>
+        <Version>149.7827.156</Version>
         <Authors>XiliumHQ,OutSystems</Authors>
         <Product>CefGlue</Product>
         <AssemblyTitle>CefGlue</AssemblyTitle>

@@ -582,19 +582,17 @@
         /// false if this method is called incorrectly. This method can only be called
         /// on user created objects.
         /// </summary>
-        public bool SetUserData(CefUserData userData)
+        public bool SetUserData(IntPtr userData)
         {
-            return cef_v8_value_t.set_user_data(_self, userData != null ? (cef_base_ref_counted_t*)userData.ToNative() : null) != 0;
+            return cef_v8_value_t.set_user_data(_self, (cef_base_ref_counted_t*)userData) != 0;
         }
 
         /// <summary>
         /// Returns the user data, if any, assigned to this object.
         /// </summary>
-        public CefUserData GetUserData()
+        public IntPtr GetUserData()
         {
-            return CefUserData.FromNativeOrNull(
-                (cef_user_data_t*)cef_v8_value_t.get_user_data(_self)
-                );
+            return (IntPtr)cef_v8_value_t.get_user_data(_self);
         }
 
         /// <summary>

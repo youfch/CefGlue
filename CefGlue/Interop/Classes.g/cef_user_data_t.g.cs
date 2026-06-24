@@ -38,25 +38,5 @@ namespace Xilium.CefGlue.Interop
         #endif
         internal delegate int has_at_least_one_ref_delegate(cef_user_data_t* self);
         
-        private static int _sizeof;
-        
-        static cef_user_data_t()
-        {
-            _sizeof = Marshal.SizeOf(typeof(cef_user_data_t));
-        }
-        
-        internal static cef_user_data_t* Alloc()
-        {
-            var ptr = (cef_user_data_t*)Marshal.AllocHGlobal(_sizeof);
-            *ptr = new cef_user_data_t();
-            ptr->_base._size = (UIntPtr)_sizeof;
-            return ptr;
-        }
-        
-        internal static void Free(cef_user_data_t* ptr)
-        {
-            Marshal.FreeHGlobal((IntPtr)ptr);
-        }
-        
     }
 }

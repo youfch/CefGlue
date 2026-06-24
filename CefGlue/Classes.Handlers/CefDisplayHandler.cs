@@ -237,5 +237,55 @@
         /// </summary>
         protected virtual void OnMediaAccessChange(CefBrowser browser, bool hasVideoAccess, bool hasAudioAccess)
         { }
+
+
+        private int on_contents_bounds_change(cef_display_handler_t* self, cef_browser_t* browser, cef_rect_t* new_bounds)
+        {
+            CheckSelf(self);
+
+            var mBrowser = CefBrowser.FromNative(browser);
+            var mNewBounds = new CefRectangle(new_bounds->x, new_bounds->y, new_bounds->width, new_bounds->height);
+
+            return OnContentsBoundsChange(mBrowser, mNewBounds) ? 1 : 0;
+        }
+
+        /// <summary>
+        /// Called when JavaScript is requesting new bounds via window.moveTo/By() or
+        /// window.resizeTo/By(). |new_bounds| are in DIP screen coordinates.
+        /// </summary>
+        protected virtual bool OnContentsBoundsChange(CefBrowser browser, CefRectangle newBounds)
+        {
+            return false;
+        }
+
+
+        private int get_root_window_screen_rect(cef_display_handler_t* self, cef_browser_t* browser, cef_rect_t* rect)
+        {
+            CheckSelf(self);
+
+            var mBrowser = CefBrowser.FromNative(browser);
+            var mRect = new CefRectangle();
+
+            var result = GetRootWindowScreenRect(mBrowser, ref mRect);
+            if (result)
+            {
+                rect->x = mRect.X;
+                rect->y = mRect.Y;
+                rect->width = mRect.Width;
+                rect->height = mRect.Height;
+                return 1;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Called to retrieve the external (client-provided) root window rectangle in
+        /// screen DIP coordinates. Only called for windowed browsers on Windows and
+        /// Linux. Return true if the rect was provided.
+        /// </summary>
+        protected virtual bool GetRootWindowScreenRect(CefBrowser browser, ref CefRectangle rect)
+        {
+            return false;
+        }
     }
 }
