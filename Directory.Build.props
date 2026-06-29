@@ -3,7 +3,7 @@
     <PropertyGroup>
         <DotnetVersion>net8.0</DotnetVersion>
         <LangVersion>latest</LangVersion>
-        <AvaloniaVersion>11.0.9</AvaloniaVersion>
+        <AvaloniaVersion>12.0.4</AvaloniaVersion>
         <CefRedistVersion>149.0.4</CefRedistVersion>
         <CefRedistOSXVersion>149.0.4</CefRedistOSXVersion>
         <CefRedistLinuxVersion>149.0.4</CefRedistLinuxVersion>

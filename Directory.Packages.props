@@ -16,8 +16,6 @@
     <ItemGroup>
         <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
         <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
-        <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
-        <PackageVersion Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
         <PackageVersion Include="Avalonia.Themes.Simple" Version="$(AvaloniaVersion)" />
       
         <PackageVersion Include="Dotnet.Bundle" Version="0.9.13" />
