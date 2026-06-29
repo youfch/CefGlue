@@ -173,7 +173,7 @@ namespace Xilium.CefGlue.Avalonia.Platform
             MouseMoved?.Invoke(e.AsCefMouseEvent(MousePositionReferential));
         }
 
-        private void OnLostFocus(object sender, RoutedEventArgs e)
+        private void OnLostFocus(object sender, FocusChangedEventArgs e)
         {
             LostFocus?.Invoke();
         }
@@ -190,13 +190,14 @@ namespace Xilium.CefGlue.Avalonia.Platform
         private void OnAttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
         {
             VisibilityChanged?.Invoke(true);
-            if (e.Root is Window newWindow)
+            if (TopLevel.GetTopLevel(e.RootVisual) is Window newWindow)
             {
                 _windowStateChangedObservable = newWindow.GetPropertyChangedObservable(Window.WindowStateProperty).Subscribe(OnHostWindowStateChanged);
             }
-            if (e.Root.RenderScaling != RenderSurface.DeviceScaleFactor)
+            var topLevel = TopLevel.GetTopLevel(e.RootVisual);
+            if (topLevel != null && topLevel.RenderScaling != RenderSurface.DeviceScaleFactor)
             {
-                RenderSurface.DeviceScaleFactor = (float)e.Root.RenderScaling;
+                RenderSurface.DeviceScaleFactor = (float)topLevel.RenderScaling;
                 ScreenInfoChanged?.Invoke(RenderSurface.DeviceScaleFactor);
             }
         }
@@ -268,10 +269,11 @@ namespace Xilium.CefGlue.Avalonia.Platform
             var lastPointerEvent = this._lastPointerEvent; // story a copy, since this might be other thread
             if (lastPointerEvent != null)
             {
-                var dataObject = new DataObject();
-                dataObject.Set(DataFormats.Text, dragData.FragmentText);
+                var data = new DataTransfer();
+                data.Add(DataTransferItem.CreateText(dragData.FragmentText));
 
-                var result = await Dispatcher.UIThread.InvokeAsync(() => DragDrop.DoDragDrop(lastPointerEvent, dataObject, allowedOps.AsDragDropEffects()));
+                var result = await Dispatcher.UIThread.InvokeAsync(
+                    () => DragDrop.DoDragDropAsync(lastPointerEvent, data, allowedOps.AsDragDropEffects()));
                 this._lastPointerEvent = null;
                 _previousCursor = null;
                 _currentDragCursor = null;

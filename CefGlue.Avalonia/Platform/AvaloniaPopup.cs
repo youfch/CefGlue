@@ -2,7 +2,6 @@
 using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using Xilium.CefGlue.Common.Platform;
 
 namespace Xilium.CefGlue.Avalonia.Platform
@@ -45,7 +44,7 @@ namespace Xilium.CefGlue.Avalonia.Platform
         {
             Dispatcher.UIThread.Post(() =>
             {
-                _popup.Show(_popup.PlacementTarget.GetVisualRoot() as Window);
+                _popup.Show(TopLevel.GetTopLevel(_popup.PlacementTarget) as Window);
             });
         }
 
