@@ -163,8 +163,9 @@ namespace Xilium.CefGlue.Demo.Avalonia
                     popupBrowser.Address = targetUrl;
                     window.Content = popupBrowser;
                     window.Position = new PixelPoint(bounds.X, bounds.Y);
-                    window.Height = bounds.Height;
-                    window.Width = bounds.Width;
+                    // CEF may report int.MinValue for unset bounds; Avalonia 12 rejects invalid double values.
+                    if (bounds.Width > 0) window.Width = bounds.Width;
+                    if (bounds.Height > 0) window.Height = bounds.Height;
                     window.Title = targetUrl;
                     window.Show();
                 });
