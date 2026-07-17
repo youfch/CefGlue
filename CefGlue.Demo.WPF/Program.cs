@@ -18,12 +18,8 @@ namespace Xilium.CefGlue.Demo.WPF
             var settings = new CefSettings()
             {
                 RootCachePath = cachePath,
-#if WINDOWLESS
-                // its recommended to leave this off (false), since its less performant and can cause more issues
+                // OSR mode for testing .NET 10 compatibility
                 WindowlessRenderingEnabled = true
-#else
-                WindowlessRenderingEnabled = false
-#endif
             };
             CefRuntimeLoader.Initialize(settings);
 
