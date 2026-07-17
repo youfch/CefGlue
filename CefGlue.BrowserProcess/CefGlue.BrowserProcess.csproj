@@ -26,8 +26,6 @@
     <ProjectReference Include="..\CefGlue\CefGlue.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Runtime.Loader" />
   </ItemGroup>
 
   <Target Name="Editbin" AfterTargets="Compile" Condition="$(IsEditbinEnabled) == True And $(VcvarsFile) != '' And $([MSBuild]::IsOSPlatform('Windows'))">
