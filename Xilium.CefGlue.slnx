@@ -1,0 +1,154 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Debug_WindowlessRender" />
+    <BuildType Name="Release" />
+    <BuildType Name="ReleaseWPFAvalonia" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/BrowserProcess.Packages/">
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.jit/CefGlue.BrowserProcess.runtime.jit.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.linux-arm64.jit/CefGlue.BrowserProcess.runtime.linux-arm64.jit.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.linux-arm64/CefGlue.BrowserProcess.runtime.linux-arm64.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.linux-x64.jit/CefGlue.BrowserProcess.runtime.linux-x64.jit.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.linux-x64/CefGlue.BrowserProcess.runtime.linux-x64.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.osx-arm64.jit/CefGlue.BrowserProcess.runtime.osx-arm64.jit.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.osx-arm64/CefGlue.BrowserProcess.runtime.osx-arm64.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.osx-x64.jit/CefGlue.BrowserProcess.runtime.osx-x64.jit.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.osx-x64/CefGlue.BrowserProcess.runtime.osx-x64.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.win-arm64.jit/CefGlue.BrowserProcess.runtime.win-arm64.jit.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.win-arm64/CefGlue.BrowserProcess.runtime.win-arm64.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.win-x64.jit/CefGlue.BrowserProcess.runtime.win-x64.jit.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.win-x64/CefGlue.BrowserProcess.runtime.win-x64.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime/CefGlue.BrowserProcess.runtime.csproj">
+      <BuildType Solution="Debug_WindowlessRender|*" Project="Debug" />
+      <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="CefGlue.CopyLocal.props" />
+    <File Path="CefGlue.Packages.props" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Nuget.config" />
+  </Folder>
+  <Project Path="CefGlue.Avalonia/CefGlue.Avalonia.csproj">
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CefGlue.BrowserProcess/CefGlue.BrowserProcess.csproj">
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CefGlue.Common.Shared/CefGlue.Common.Shared.csproj">
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CefGlue.Common/CefGlue.Common.csproj">
+    <BuildDependency Project="CefGlue.BrowserProcess/CefGlue.BrowserProcess.csproj" />
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CefGlue.Demo.Avalonia/CefGlue.Demo.Avalonia.csproj">
+    <BuildDependency Project="CefGlue.BrowserProcess/CefGlue.BrowserProcess.csproj" />
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Build Solution="ReleaseWPFAvalonia|*" Project="false" />
+  </Project>
+  <Project Path="CefGlue.Demo.WPF/CefGlue.Demo.WPF.csproj">
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Build Solution="ReleaseWPFAvalonia|*" Project="false" />
+  </Project>
+  <Project Path="CefGlue.Tests/CefGlue.Tests.csproj">
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CefGlue.WPF/CefGlue.WPF.csproj">
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CefGlue/CefGlue.csproj">
+    <BuildType Solution="ReleaseWPFAvalonia|*" Project="Release" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+</Solution>
