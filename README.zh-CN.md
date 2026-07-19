@@ -51,8 +51,6 @@ BrowserProcess（CEF 渲染子进程）不再内嵌在 `CefGlue.Common` 中，�
 |------|------|
 | `CefGlue.BrowserProcess.runtime` | 元包 - 包含所有 AOT 平台包 |
 | `CefGlue.BrowserProcess.runtime.jit` | 元包 - 包含所有 JIT 平台包 |
-| `CefGlue.BrowserProcess.runtime.win` | 元包 - 包含 Windows AOT (x64 + arm64) |
-| `CefGlue.BrowserProcess.runtime.win.jit` | 元包 - 包含 Windows JIT (x64 + arm64) |
 
 ### AOT vs JIT 对比
 

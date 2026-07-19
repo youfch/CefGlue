@@ -53,8 +53,6 @@
         <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-arm64" Version="$(Version)" />
         <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-arm64.jit" Version="$(Version)" />
         <PackageVersion Include="CefGlue.BrowserProcess.runtime.jit" Version="$(Version)" />
-        <PackageVersion Include="CefGlue.BrowserProcess.runtime.win.jit" Version="$(Version)" />
-        <PackageVersion Include="CefGlue.BrowserProcess.runtime.win" Version="$(Version)" />
     </ItemGroup>
 
     <ItemGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(DefineConstants), '(^|;)HAS_NLOG($|;)'))">

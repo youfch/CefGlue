@@ -52,8 +52,6 @@ The BrowserProcess (CEF renderer subprocess) is no longer bundled inside `CefGlu
 |---------|-------------|
 | `CefGlue.BrowserProcess.runtime` | Meta package - includes all AOT platform packages |
 | `CefGlue.BrowserProcess.runtime.jit` | Meta package - includes all JIT platform packages |
-| `CefGlue.BrowserProcess.runtime.win` | Meta package - includes Windows AOT (x64 + arm64) |
-| `CefGlue.BrowserProcess.runtime.win.jit` | Meta package - includes Windows JIT (x64 + arm64) |
 
 ### AOT vs JIT
 
