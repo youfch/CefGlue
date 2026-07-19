@@ -1,0 +1,108 @@
+name: Pack NuGet Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version (e.g. 149.7827.156)'
+        required: true
+        type: string
+
+jobs:
+  browserprocess:
+    name: ${{ matrix.rid }} ${{ matrix.mode }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - rid: win-x64
+            runner: windows-latest
+          - rid: win-arm64
+            runner: windows-arm64
+          - rid: linux-x64
+            runner: ubuntu-latest
+          - rid: linux-arm64
+            runner: ubuntu-24.04-arm
+          - rid: osx-x64
+            runner: macos-13
+          - rid: osx-arm64
+            runner: macos-latest
+        mode: [aot, jit]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        shell: bash
+        run: |
+          PKG="CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.${{ matrix.rid }}"
+          BIN="$PKG/build/bin/${{ matrix.rid }}"
+          mkdir -p "$BIN"
+          if [ "${{ matrix.mode }}" = "aot" ]; then
+            dotnet publish CefGlue.BrowserProcess/CefGlue.BrowserProcess.csproj \
+              -r ${{ matrix.rid }} -c Release \
+              -p:PublishAot=true -p:StripSymbols=true -p:CETCompat=false -p:IsPublishing=True \
+              -o "$BIN"
+          else
+            dotnet publish CefGlue.BrowserProcess/CefGlue.BrowserProcess.csproj \
+              -r ${{ matrix.rid }} -c Release --self-contained \
+              -p:IsPublishing=True \
+              -o "$BIN"
+          fi
+
+      - name: Pack
+        run: dotnet pack CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.${{ matrix.rid }}/CefGlue.BrowserProcess.runtime.${{ matrix.rid }}.csproj -c Release -o Nuget/output --no-build
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: bp-${{ matrix.rid }}-${{ matrix.mode }}
+          path: Nuget/output/*.nupkg
+
+  managed:
+    name: Managed Packages
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore
+      - name: Pack Common
+        run: dotnet pack CefGlue.Common/CefGlue.Common.csproj -c Release -p:IsPublishing=True -o Nuget/output
+      - name: Pack WPF
+        run: dotnet pack CefGlue.WPF/CefGlue.WPF.csproj -c Release -p:IsPublishing=True -o Nuget/output
+      - name: Pack Avalonia
+        run: dotnet pack CefGlue.Avalonia/CefGlue.Avalonia.csproj -c Release -p:IsPublishing=True -o Nuget/output
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: bp-managed
+          path: Nuget/output/*.nupkg
+
+  merge:
+    name: Merge & Meta
+    needs: [browserprocess, managed]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: bp-*
+          merge-multiple: true
+      - name: Pack meta
+        run: |
+          dotnet pack CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime/CefGlue.BrowserProcess.runtime.csproj -c Release -o final --no-build
+          dotnet pack CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.jit/CefGlue.BrowserProcess.runtime.jit.csproj -c Release -o final --no-build
+      - name: Upload final
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: final/*.nupkg
