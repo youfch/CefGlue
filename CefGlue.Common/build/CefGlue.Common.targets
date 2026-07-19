@@ -3,6 +3,10 @@
         <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+        <CefGlueTargetPlatform>$(RuntimeIdentifier)</CefGlueTargetPlatform>
+    </PropertyGroup>
+
     <ItemGroup Condition="'$(CefGlueTargetPlatform)' == 'osx-x64' OR '$(CefGlueTargetPlatform)' == 'osx-arm64'">
         <None Condition="'$(CefGlueTargetPlatform)' == 'osx-x64'" Include="@(CefRedistOSX64)">
             <Visible>false</Visible>
@@ -57,6 +61,8 @@
             <PublishState>Included</PublishState>
         </None>
     </ItemGroup>
+
+    
 
     <!-- Ensure CefGlue core DLLs are included in publish output -->
     <Target Name="EnsureCefGlueDllsPublished" AfterTargets="AfterBuild"
