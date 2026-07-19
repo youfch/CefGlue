@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(DotnetVersion)</TargetFramework>
     <PackageId>CefGlue.BrowserProcess.runtime.osx-arm64</PackageId>
@@ -9,6 +9,7 @@
     <NoWarn>$(NoWarn);NU5100;NU5118</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="build\**" Pack="True" PackagePath="build\" />
+        <None Include="build\**" Pack="True" PackagePath="build\" />
+    <None Include="build\*.targets" Pack="True" PackagePath="buildTransitive\" />
   </ItemGroup>
 </Project>

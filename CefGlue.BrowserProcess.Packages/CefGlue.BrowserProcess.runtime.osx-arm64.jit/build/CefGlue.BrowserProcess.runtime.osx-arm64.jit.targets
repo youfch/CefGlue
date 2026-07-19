@@ -5,7 +5,7 @@
     <Target Name="CopyCefGlueBrowserProcess_OSX_arm64_jit" AfterTargets="AfterBuild"
             Condition="$([MSBuild]::IsOSPlatform('OSX'))">
         <ItemGroup>
-            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\osx-arm64.jit\*" />
+            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\osx-arm64.jit\*" />
         </ItemGroup>
         <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
         <ItemGroup>

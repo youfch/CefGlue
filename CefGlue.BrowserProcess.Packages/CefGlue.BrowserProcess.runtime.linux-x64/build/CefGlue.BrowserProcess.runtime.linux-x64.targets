@@ -5,8 +5,8 @@
     <Target Name="CopyCefGlueBrowserProcess_Linux_x64" AfterTargets="AfterBuild"
             Condition="$([MSBuild]::IsOSPlatform('Linux'))">
         <ItemGroup>
-            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\linux-x64\*"
-                             Exclude="$(MSBuildThisFileDirectory)bin\linux-x64\*.pdb" />
+<_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\linux-x64\*"
+							 Exclude="$(MSBuildThisFileDirectory)..\build\bin\linux-x64\*.pdb" />
         </ItemGroup>
         <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
         <ItemGroup>

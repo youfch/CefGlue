@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(DotnetVersion)</TargetFramework>
     <PackageId>CefGlue.BrowserProcess.runtime.win-x64.jit</PackageId>
@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="build\**" Pack="True" PackagePath="build\" />
+        <None Include="build\**" Pack="True" PackagePath="build\" />
+    <None Include="build\*.targets" Pack="True" PackagePath="buildTransitive\" />
   </ItemGroup>
 </Project>

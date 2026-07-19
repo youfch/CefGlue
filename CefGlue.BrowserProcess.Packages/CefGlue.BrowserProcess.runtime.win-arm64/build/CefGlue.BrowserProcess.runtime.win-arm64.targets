@@ -5,8 +5,8 @@
     <Target Name="CopyCefGlueBrowserProcess_Win_arm64" AfterTargets="AfterBuild"
             Condition="$([MSBuild]::IsOSPlatform('Windows'))">
         <ItemGroup>
-            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\win-arm64\*"
-                             Exclude="$(MSBuildThisFileDirectory)bin\win-arm64\*.pdb" />
+<_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\win-arm64\*"
+							 Exclude="$(MSBuildThisFileDirectory)..\build\bin\win-arm64\*.pdb" />
         </ItemGroup>
         <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
         <ItemGroup>

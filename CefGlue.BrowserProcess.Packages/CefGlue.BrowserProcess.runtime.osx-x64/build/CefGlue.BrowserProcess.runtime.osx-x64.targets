@@ -5,8 +5,8 @@
     <Target Name="CopyCefGlueBrowserProcess_OSX_x64" AfterTargets="AfterBuild"
             Condition="$([MSBuild]::IsOSPlatform('OSX'))">
         <ItemGroup>
-            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\osx-x64\*"
-                             Exclude="$(MSBuildThisFileDirectory)bin\osx-x64\*.pdb" />
+            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\osx-x64\*"
+                             Exclude="$(MSBuildThisFileDirectory)..\build\bin\osx-x64\*.pdb" />
         </ItemGroup>
         <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
         <ItemGroup>
