@@ -1,11 +1,9 @@
 <Project>
-    <PropertyGroup>
-        <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
-    </PropertyGroup>
     <Target Name="CopyCefGlueBrowserProcess" AfterTargets="AfterBuild"
-            Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+            Condition="Exists('$(_CefGlueBpBinDir)')">
         <ItemGroup>
-            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\osx-arm64.jit\*" />
+            <_CefGlueBpFiles Include="$(_CefGlueBpBinDir)*"
+                             Exclude="$(_CefGlueBpBinDir)*.pdb" />
         </ItemGroup>
         <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
         <ItemGroup>
@@ -17,7 +15,8 @@
             </ResolvedFileToPublish>
         </ItemGroup>
     </Target>
+
     <Target Name="CopyCefGlueBrowserProcessPublish" AfterTargets="Publish"
             DependsOnTargets="CopyCefGlueBrowserProcess"
-            Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+            Condition="Exists('$(_CefGlueBpBinDir)')" />
 </Project>

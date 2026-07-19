@@ -2,13 +2,12 @@
     <PropertyGroup>
         <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
     </PropertyGroup>
-    <Target Name="CopyCefGlueBrowserProcess" AfterTargets="AfterBuild">
+    <Target Name="CopyCefGlueBrowserProcess" AfterTargets="AfterBuild"
+            Condition="$([MSBuild]::IsOSPlatform('Windows'))">
         <ItemGroup>
             <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\win-x64.jit\*" />
         </ItemGroup>
-        <Copy SourceFiles="@(_CefGlueBpFiles)"
-              DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)"
-              SkipUnchangedFiles="true" />
+        <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
         <ItemGroup>
             <FileWrites Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
             <_CefGlueBpOutputFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
@@ -19,5 +18,6 @@
         </ItemGroup>
     </Target>
     <Target Name="CopyCefGlueBrowserProcessPublish" AfterTargets="Publish"
-            DependsOnTargets="CopyCefGlueBrowserProcess" />
+            DependsOnTargets="CopyCefGlueBrowserProcess"
+            Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
 </Project>
