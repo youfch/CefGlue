@@ -2,7 +2,7 @@
     <PropertyGroup>
         <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
     </PropertyGroup>
-    <Target Name="CopyCefGlueBrowserProcess" AfterTargets="AfterBuild"
+    <Target Name="CopyCefGlueBrowserProcess_OSX_x64" AfterTargets="AfterBuild"
             Condition="$([MSBuild]::IsOSPlatform('OSX'))">
         <ItemGroup>
             <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\osx-x64\*"
@@ -18,7 +18,7 @@
             </ResolvedFileToPublish>
         </ItemGroup>
     </Target>
-    <Target Name="CopyCefGlueBrowserProcessPublish" AfterTargets="Publish"
-            DependsOnTargets="CopyCefGlueBrowserProcess"
+    <Target Name="CopyCefGlueBrowserProcess_OSX_x64Publish" AfterTargets="Publish"
+            DependsOnTargets="CopyCefGlueBrowserProcess_OSX_x64"
             Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
 </Project>

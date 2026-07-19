@@ -2,7 +2,7 @@
     <PropertyGroup>
         <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
     </PropertyGroup>
-    <Target Name="CopyCefGlueBrowserProcess" AfterTargets="AfterBuild"
+    <Target Name="CopyCefGlueBrowserProcess_Win_arm64" AfterTargets="AfterBuild"
             Condition="$([MSBuild]::IsOSPlatform('Windows'))">
         <ItemGroup>
             <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\win-arm64\*"
@@ -18,7 +18,7 @@
             </ResolvedFileToPublish>
         </ItemGroup>
     </Target>
-    <Target Name="CopyCefGlueBrowserProcessPublish" AfterTargets="Publish"
-            DependsOnTargets="CopyCefGlueBrowserProcess"
+    <Target Name="CopyCefGlueBrowserProcess_Win_arm64Publish" AfterTargets="Publish"
+            DependsOnTargets="CopyCefGlueBrowserProcess_Win_arm64"
             Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
 </Project>

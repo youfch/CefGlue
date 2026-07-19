@@ -2,7 +2,7 @@
     <PropertyGroup>
         <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
     </PropertyGroup>
-    <Target Name="CopyCefGlueBrowserProcess" AfterTargets="AfterBuild"
+    <Target Name="CopyCefGlueBrowserProcess_Linux_x64_jit" AfterTargets="AfterBuild"
             Condition="$([MSBuild]::IsOSPlatform('Linux'))">
         <ItemGroup>
             <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\linux-x64.jit\*" />
@@ -17,7 +17,7 @@
             </ResolvedFileToPublish>
         </ItemGroup>
     </Target>
-    <Target Name="CopyCefGlueBrowserProcessPublish" AfterTargets="Publish"
-            DependsOnTargets="CopyCefGlueBrowserProcess"
+    <Target Name="CopyCefGlueBrowserProcess_Linux_x64_jitPublish" AfterTargets="Publish"
+            DependsOnTargets="CopyCefGlueBrowserProcess_Linux_x64_jit"
             Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
 </Project>
