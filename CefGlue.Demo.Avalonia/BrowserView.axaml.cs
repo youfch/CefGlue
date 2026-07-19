@@ -162,8 +162,8 @@ namespace Xilium.CefGlue.Demo.Avalonia
                     var popupBrowser = new AvaloniaCefBrowser();
                     popupBrowser.Address = targetUrl;
                     window.Content = popupBrowser;
-                    window.Position = new PixelPoint(bounds.X, bounds.Y);
-                    // CEF may report int.MinValue for unset bounds; Avalonia 12 rejects invalid double values.
+                    // CEF may report int.MinValue for unset bounds; guard against invalid values.
+                    if (bounds.X > 0 && bounds.Y > 0) window.Position = new PixelPoint(bounds.X, bounds.Y);
                     if (bounds.Width > 0) window.Width = bounds.Width;
                     if (bounds.Height > 0) window.Height = bounds.Height;
                     window.Title = targetUrl;
