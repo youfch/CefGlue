@@ -3,7 +3,7 @@
         <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
     </PropertyGroup>
     <Target Name="CopyCefGlueBrowserProcess_OSX_arm64_jit" AfterTargets="AfterBuild"
-            Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+            Condition="'$(CefGlueTargetPlatform)' == 'osx-arm64'">
         <ItemGroup>
             <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\osx-arm64.jit\*" />
         </ItemGroup>
@@ -19,5 +19,5 @@
     </Target>
     <Target Name="CopyCefGlueBrowserProcess_OSX_arm64_jitPublish" AfterTargets="Publish"
             DependsOnTargets="CopyCefGlueBrowserProcess_OSX_arm64_jit"
-            Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+            Condition="'$(CefGlueTargetPlatform)' == 'osx-arm64'" />
 </Project>
