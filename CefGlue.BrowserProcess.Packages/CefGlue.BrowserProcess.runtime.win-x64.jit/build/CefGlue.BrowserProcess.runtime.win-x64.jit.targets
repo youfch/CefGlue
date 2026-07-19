@@ -1,0 +1,23 @@
+<Project>
+    <PropertyGroup>
+        <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
+    </PropertyGroup>
+    <Target Name="CopyCefGlueBrowserProcess" AfterTargets="AfterBuild">
+        <ItemGroup>
+            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)bin\win-x64.jit\*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(_CefGlueBpFiles)"
+              DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)"
+              SkipUnchangedFiles="true" />
+        <ItemGroup>
+            <FileWrites Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
+            <_CefGlueBpOutputFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
+            <ResolvedFileToPublish Include="@(_CefGlueBpOutputFiles)">
+                <RelativePath>CefGlueBrowserProcess\%(FileName)%(Extension)</RelativePath>
+                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+            </ResolvedFileToPublish>
+        </ItemGroup>
+    </Target>
+    <Target Name="CopyCefGlueBrowserProcessPublish" AfterTargets="Publish"
+            DependsOnTargets="CopyCefGlueBrowserProcess" />
+</Project>
