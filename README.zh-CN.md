@@ -60,7 +60,6 @@ BrowserProcess（CEF 渲染子进程）不再内嵌在 `CefGlue.Common` 中，�
 | .NET 运行时依赖 | 无 | 自包含，不需系统安装运行时 |
 | 构建要求 | 需安装 AOT workload | 标准 .NET SDK 即可 |
 | 启动速度 | 更快 | 正常 |
-| 推荐场景 | **生产环境发布** | 开发环境 / 无 AOT 的 CI |
 
 ## 快速开始
 

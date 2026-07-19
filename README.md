@@ -61,7 +61,6 @@ The BrowserProcess (CEF renderer subprocess) is no longer bundled inside `CefGlu
 | .NET runtime dependency | None | Self-contained, no system dependency |
 | Build requirement | AOT workload installed | Standard .NET SDK only |
 | Startup time | Faster | Normal |
-| Recommendation | **Production release** | Development / CI without AOT |
 
 ## Getting Started
 
