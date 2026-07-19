@@ -13,11 +13,15 @@
             <_CefGlueBpOutputFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
             <ResolvedFileToPublish Include="@(_CefGlueBpOutputFiles)">
                 <RelativePath>CefGlueBrowserProcess\%(FileName)%(Extension)</RelativePath>
-                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+                <CopyToPublishDirectory>Always</CopyToPublishDirectory>
             </ResolvedFileToPublish>
         </ItemGroup>
     </Target>
     <Target Name="CopyCefGlueBrowserProcess_OSX_x64_jitPublish" AfterTargets="Publish"
-            DependsOnTargets="CopyCefGlueBrowserProcess_OSX_x64_jit"
-            Condition="'$(CefGlueTargetPlatform)' == 'osx-x64'" />
+            Condition="'$(CefGlueTargetPlatform)' == 'osx-x64'">
+        <ItemGroup>
+            <_CefGlueBpPublishFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(_CefGlueBpPublishFiles)" DestinationFolder="$(PublishDir)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
+    </Target>
 </Project>
