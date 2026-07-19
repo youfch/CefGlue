@@ -44,14 +44,14 @@
     <ItemGroup Condition="'$(CefGlueTargetPlatform)' == 'linux-x64' OR '$(CefGlueTargetPlatform)' == 'linux-arm64'">
         <None Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'" Include="@(CefRedistLinux64)">
             <Visible>false</Visible>
-            <Link>$(OutputDirectory)$(CefGlueBrowserProcessDir)\%(RecursiveDir)%(FileName)%(Extension)</Link>
+            <Link>$(OutputDirectory)%(RecursiveDir)%(FileName)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
             <PublishState>Included</PublishState>
         </None>
         <None Condition="'$(CefGlueTargetPlatform)' == 'linux-arm64'" Include="@(CefRedistLinuxARM64)">
             <Visible>false</Visible>
-            <Link>$(OutputDirectory)$(CefGlueBrowserProcessDir)\%(RecursiveDir)%(FileName)%(Extension)</Link>
+            <Link>$(OutputDirectory)%(RecursiveDir)%(FileName)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
             <PublishState>Included</PublishState>
