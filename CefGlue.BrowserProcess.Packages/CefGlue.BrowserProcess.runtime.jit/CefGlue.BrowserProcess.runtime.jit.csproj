@@ -17,9 +17,4 @@
     <ProjectReference Include="..\CefGlue.BrowserProcess.runtime.osx-x64.jit\CefGlue.BrowserProcess.runtime.osx-x64.jit.csproj" />
     <ProjectReference Include="..\CefGlue.BrowserProcess.runtime.osx-arm64.jit\CefGlue.BrowserProcess.runtime.osx-arm64.jit.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="build\CefGlue.BrowserProcess.runtime.jit.props" Pack="true" PackagePath="build\" />
-    <None Include="build\CefGlue.BrowserProcess.runtime.jit.targets" Pack="true" PackagePath="build\" />
-  </ItemGroup>
 </Project>

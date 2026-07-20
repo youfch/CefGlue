@@ -14,8 +14,10 @@
     <Target Name="CopyCefGlueBrowserProcess_win-x64_jitPublish" AfterTargets="Publish"
             Condition="'$(CefGlueTargetPlatform)' == 'win-x64'">
         <ItemGroup>
-            <_CefGlueBpPublishFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\*" />
+            <_CefGlueBpPublishFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*.*" />
         </ItemGroup>
-        <Copy SourceFiles="@(_CefGlueBpPublishFiles)" DestinationFolder="$(PublishDir)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
+        <Copy SourceFiles="@(_CefGlueBpPublishFiles)"
+              DestinationFiles="@(_CefGlueBpPublishFiles->'$(PublishDir)$(CefGlueBrowserProcessDir)\%(RecursiveDir)%(FileName)%(Extension)')"
+              SkipUnchangedFiles="true" />
     </Target>
 </Project>
