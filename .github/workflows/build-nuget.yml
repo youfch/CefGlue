@@ -232,6 +232,16 @@ jobs:
           -p:Version=${{ needs.version.outputs.pkg_version }}
           --configfile nuget-source/NuGet.config
 
+      - name: Build CefGlue.Common (ARM64)
+        run: dotnet build CefGlue.Common/CefGlue.Common.csproj -c Release -p:Platform=ARM64 -p:CI=True --no-restore --configfile nuget-source/NuGet.config
+
+      - name: Pack CefGlue.Common (ARM64)
+        run: >
+          dotnet pack CefGlue.Common/CefGlue.Common.csproj
+          -c Release -p:Platform=ARM64  -p:CI=True -p:GeneratePackageOnBuild=false -o Nuget/output --no-build
+          -p:Version=${{ needs.version.outputs.pkg_version }}
+          --configfile nuget-source/NuGet.config
+
       - name: Pack CefGlue.WPF
         run: >
           dotnet pack CefGlue.WPF/CefGlue.WPF.csproj
