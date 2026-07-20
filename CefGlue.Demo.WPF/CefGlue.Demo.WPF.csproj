@@ -8,7 +8,6 @@
         <UseWPF>true</UseWPF>
         <StartupObject>Xilium.CefGlue.Demo.WPF.Program</StartupObject>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
-		<CETCompat>false</CETCompat>
 	</PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug_WindowlessRender'">

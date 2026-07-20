@@ -1,0 +1,350 @@
+name: Build NuGet Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version (e.g. 150.7871.115). Leave empty to auto-detect.'
+        required: false
+        type: string
+      cef_version:
+        description: 'CEF version for cef.redist dependency (e.g. 150.0.11). Leave empty to auto-detect.'
+        required: false
+        type: string
+      create_release:
+        description: 'Create GitHub Release'
+        required: false
+        type: boolean
+        default: true
+
+env:
+  DOTNET_VERSION: 10.0.x
+
+jobs:
+  version:
+    name: Resolve Versions
+    runs-on: ubuntu-latest
+    outputs:
+      pkg_version: ${{ steps.resolve.outputs.pkg_version }}
+      cef_version: ${{ steps.resolve.outputs.cef_version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve versions
+        id: resolve
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            PKG_VER="${{ inputs.version }}"
+          else
+            PKG_VER=$(grep -oP '<Version>\K[^<]+' Directory.Build.props)
+          fi
+          echo "pkg_version=${PKG_VER}" >> "$GITHUB_OUTPUT"
+
+          if [ -n "${{ inputs.cef_version }}" ]; then
+            CEF_VER="${{ inputs.cef_version }}"
+          else
+            CEF_VER=$(grep -oP 'CEF_VERSION "\K[^"+]+' CefGlue.Interop.Gen/include/cef_version.h | sed 's/\+.*//')
+          fi
+          echo "cef_version=${CEF_VER}" >> "$GITHUB_OUTPUT"
+
+  download-packages:
+    name: Download cef.redist
+    needs: [version]
+    runs-on: ubuntu-latest
+    outputs:
+      cef_version: ${{ needs.version.outputs.cef_version }}
+    steps:
+      - name: Download cef.redist packages
+        shell: bash
+        run: |
+          mkdir -p nuget-feed
+          CEF_VER="${{ needs.version.outputs.cef_version }}"
+
+          for pkg in linux64 linuxarm64; do
+            URL="https://github.com/youfch/cef.redist.linux/releases/download/v${CEF_VER}/cef.redist.${pkg}.${CEF_VER}.nupkg"
+            echo "Downloading: $URL"
+            curl -L -o "nuget-feed/cef.redist.${pkg}.${CEF_VER}.nupkg" "$URL"
+          done
+
+          for pkg in osx64 osxarm64; do
+            URL="https://github.com/youfch/cef.redist.osx/releases/download/v${CEF_VER}/cef.redist.${pkg}.${CEF_VER}.nupkg"
+            echo "Downloading: $URL"
+            curl -L -o "nuget-feed/cef.redist.${pkg}.${CEF_VER}.nupkg" "$URL"
+          done
+
+          ls -lh nuget-feed/
+
+      - name: Create NuGet.config
+        shell: bash
+        run: |
+          cat > nuget-feed/NuGet.config << 'NUGETCONFIG'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+              <add key="local-cef" value="./" />
+            </packageSources>
+          </configuration>
+          NUGETCONFIG
+
+      - name: Upload NuGet source
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-source
+          path: nuget-feed/
+
+  browserprocess:
+    name: BP ${{ matrix.rid }} ${{ matrix.mode }}
+    needs: [version, download-packages]
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        rid: [win-x64, win-arm64, linux-x64, linux-arm64, osx-x64, osx-arm64]
+        mode: [aot, jit]
+        include:
+          - rid: win-x64
+            runner: windows-latest
+            platform: x64
+          - rid: win-arm64
+            runner: windows-latest
+            platform: ARM64
+          - rid: linux-x64
+            runner: ubuntu-latest
+            platform: x64
+          - rid: linux-arm64
+            runner: ubuntu-24.04-arm
+            platform: ARM64
+          - rid: osx-x64
+            runner: macos-latest
+            platform: x64
+          - rid: osx-arm64
+            runner: macos-latest
+            platform: ARM64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup NuGet source
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-source
+          path: nuget-source
+
+      - name: Install native tools (Linux AOT)
+        if: startsWith(matrix.rid, 'linux-') && matrix.mode == 'aot'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang zlib1g-dev
+          # If cross-compiling from x64 to arm64, install ARM64 cross-toolchain
+          if [ "${{ matrix.rid }}" = "linux-arm64" ] && [ "$(uname -m)" = "x86_64" ]; then
+            sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
+          fi
+
+      - name: Setup MSVC (Windows AOT)
+        if: startsWith(matrix.rid, 'win-') && matrix.mode == 'aot'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.platform == 'ARM64' && 'x64_arm64' || 'x64' }}
+
+      - name: Restore Runtime Package
+        shell: pwsh
+        run: |
+          $SUFFIX = if ("${{ matrix.mode }}" -eq "jit") { ".jit" } else { "" }
+          dotnet restore "CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.${{ matrix.rid }}$SUFFIX/CefGlue.BrowserProcess.runtime.${{ matrix.rid }}$SUFFIX.csproj" --configfile nuget-source/NuGet.config
+
+      - name: Restore BrowserProcess
+        run: dotnet restore "CefGlue.BrowserProcess/CefGlue.BrowserProcess.csproj" --configfile nuget-source/NuGet.config -p:Platform=${{ matrix.platform }} -r ${{ matrix.rid }}
+
+      - name: Build BrowserProcess
+        shell: pwsh
+        run: |
+          $SUFFIX = if ("${{ matrix.mode }}" -eq "jit") { ".jit" } else { "" }
+          $PKG = "CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.${{ matrix.rid }}$SUFFIX"
+          $BIN = "$PKG/build/bin/${{ matrix.rid }}$SUFFIX"
+          New-Item -ItemType Directory -Force -Path $BIN | Out-Null
+
+          $BP_PROJ = "CefGlue.BrowserProcess/CefGlue.BrowserProcess.csproj"
+          $BP_ARGS = @(
+            "-r", "${{ matrix.rid }}",
+            "-c", "Release",
+            "-p:Platform=${{ matrix.platform }}",
+            "-o", $BIN,
+            "--configfile", "nuget-source/NuGet.config"
+          )
+
+          if ("${{ matrix.mode }}" -eq "aot") {
+            $BP_ARGS += @("-p:PublishAot=true", "-p:StripSymbols=true", "-p:CETCompat=false")
+            # Cross-compilation: ARM64→x64 or x64→ARM64
+            if ("${{ matrix.rid }}" -eq "linux-arm64" -or "${{ matrix.rid }}" -eq "osx-x64") {
+              $BP_ARGS += "-p:CrossBuild=true"
+            }
+            dotnet publish $BP_PROJ @BP_ARGS
+          } else {
+            $BP_ARGS += "--self-contained"
+            dotnet publish $BP_PROJ @BP_ARGS
+          }
+
+      - name: Pack
+        shell: pwsh
+        run: |
+          $SUFFIX = if ("${{ matrix.mode }}" -eq "jit") { ".jit" } else { "" }
+          dotnet pack "CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.${{ matrix.rid }}$SUFFIX/CefGlue.BrowserProcess.runtime.${{ matrix.rid }}$SUFFIX.csproj" `
+            -c Release -o Nuget/output --no-build `
+            -p:Version=${{ needs.version.outputs.pkg_version }}
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: bp-${{ matrix.rid }}-${{ matrix.mode }}
+          path: Nuget/output/*.nupkg
+
+  managed:
+    name: Managed Packages
+    needs: [version, download-packages]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup NuGet source
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-source
+          path: nuget-source
+
+      - name: Restore
+        run: dotnet restore CefGlue.Common/CefGlue.Common.csproj --configfile nuget-source/NuGet.config -p:Platform=x64 -p:CI=true
+
+      - name: Pack CefGlue.Common
+        run: >
+          dotnet pack CefGlue.Common/CefGlue.Common.csproj
+          -c Release -p:Platform=x64  -p:CI=true -p:GeneratePackageOnBuild=false -o Nuget/output
+          -p:Version=${{ needs.version.outputs.pkg_version }}
+          --configfile nuget-source/NuGet.config
+
+      - name: Pack CefGlue.Common (ARM64)
+        run: >
+          dotnet pack CefGlue.Common/CefGlue.Common.csproj
+          -c Release -p:Platform=ARM64  -p:CI=true -p:GeneratePackageOnBuild=false -o Nuget/output
+          -p:Version=${{ needs.version.outputs.pkg_version }}
+          --configfile nuget-source/NuGet.config
+
+      - name: Pack CefGlue.WPF
+        run: >
+          dotnet pack CefGlue.WPF/CefGlue.WPF.csproj
+          -c Release -p:Platform=x64  -p:CI=true -p:GeneratePackageOnBuild=false -o Nuget/output
+          -p:Version=${{ needs.version.outputs.pkg_version }}
+          --configfile nuget-source/NuGet.config
+
+      - name: Pack CefGlue.Avalonia
+        run: >
+          dotnet pack CefGlue.Avalonia/CefGlue.Avalonia.csproj
+          -c Release -p:Platform=x64  -p:CI=true -p:GeneratePackageOnBuild=false -o Nuget/output
+          -p:Version=${{ needs.version.outputs.pkg_version }}
+          --configfile nuget-source/NuGet.config
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: bp-managed
+          path: Nuget/output/*.nupkg
+
+  merge:
+    name: Merge & Meta
+    needs: [version, browserprocess, managed]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download all BrowserProcess packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bp-*
+          merge-multiple: true
+          path: downloads
+
+      - name: Stage packages
+        shell: bash
+        run: |
+          mkdir -p Nuget/output
+          find downloads -name "*.nupkg" -exec mv {} Nuget/output/ \;
+          ls -lh Nuget/output/
+
+      - name: Pack meta packages
+        shell: bash
+        run: |
+          dotnet pack CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime/CefGlue.BrowserProcess.runtime.csproj \
+            -c Release -o final \
+            -p:Version=${{ needs.version.outputs.pkg_version }} \
+            -p:GeneratePackageOnBuild=false
+
+          dotnet pack CefGlue.BrowserProcess.Packages/CefGlue.BrowserProcess.runtime.jit/CefGlue.BrowserProcess.runtime.jit.csproj \
+            -c Release -o final \
+            -p:Version=${{ needs.version.outputs.pkg_version }} \
+            -p:GeneratePackageOnBuild=false
+
+      - name: Collect all packages
+        shell: bash
+        run: |
+          cp Nuget/output/*.nupkg final/ 2>/dev/null || true
+          ls -lh final/
+
+      - name: Upload all packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages-${{ needs.version.outputs.pkg_version }}
+          path: final/*.nupkg
+
+      - name: Package summary
+        shell: bash
+        run: |
+          echo "## NuGet Packages v${{ needs.version.outputs.pkg_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Package | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|------|" >> $GITHUB_STEP_SUMMARY
+          for f in final/*.nupkg; do
+            name=$(basename "$f")
+            size=$(du -h "$f" | cut -f1)
+            echo "| \`$name\` | $size |" >> $GITHUB_STEP_SUMMARY
+          done
+
+  release:
+    name: Create Release
+    needs: [version, merge]
+    runs-on: ubuntu-latest
+    if: ${{ inputs.create_release == true }}
+    permissions:
+      contents: write
+    steps:
+      - name: Download all packages
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-packages-${{ needs.version.outputs.pkg_version }}
+          path: packages
+
+      - name: List packages
+        shell: bash
+        run: ls -lh packages/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.version.outputs.pkg_version }}
+          name: v${{ needs.version.outputs.pkg_version }}
+          generate_release_notes: true
+          files: packages/*.nupkg

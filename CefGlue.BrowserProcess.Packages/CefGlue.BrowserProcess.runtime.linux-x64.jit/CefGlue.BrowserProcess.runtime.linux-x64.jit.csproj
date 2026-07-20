@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(DotnetVersion)</TargetFramework>
+    <PackageId>CefGlue.BrowserProcess.runtime.linux-x64.jit</PackageId>
+    <Version>$(Version)</Version>
+    <Authors>$(Authors)</Authors>
+    <Description>Self-contained JIT BrowserProcess binary for linux-x64 (~70 MB with .NET runtime). Install alongside CefGlue.Common.</Description>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>$(NoWarn);NU5100;NU5118</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+        <None Include="build\**" Pack="True" PackagePath="build\" />
+        <None Include="build\CefGlue.BrowserProcess.runtime.linux-x64.jit.targets" Pack="True" PackagePath="buildTransitive\CefGlue.BrowserProcess.runtime.linux-x64.jit.targets" />
+  </ItemGroup>
+</Project>

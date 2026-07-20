@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -52,7 +52,7 @@
 		<Exec Command="call &quot;$(VcvarsFile)&quot;&#xD;&#xA; editbin /STACK:0x800000 &quot;$(ApphostLocation)\apphost.exe&quot;&#xD;&#xA;" />
 	</Target>
 
-	<Target Name="PublishApp" AfterTargets="AfterBuild" Condition="'$(_AssemblyTimestampBeforeCompile)' != '$(_AssemblyTimestampAfterCompile)' and '$(IsPublishing)' != 'True'">
+	<Target Name="PublishApp" AfterTargets="AfterBuild" Condition="'$(CI)' != 'true' and '$(IsPublishing)' != 'True'">
 		<!-- WINDOWS -->
 		<Message Text="Publishing CefGlue.BrowserProcess on Windows ($(Platform))..." Importance="High" />
 		<MSBuild Projects="CefGlue.BrowserProcess.csproj" Targets="Publish" Properties="$(PublishCommonConfig)win-$(ArchitectureConfig);IsEditbinEnabled=True;" />
