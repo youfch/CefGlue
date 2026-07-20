@@ -35,14 +35,14 @@ BrowserProcess（CEF 渲染子进程）不再内嵌在 `CefGlue.Common` 中，�
 | `CefGlue.BrowserProcess.runtime.win-x64` | AOT | ~7 MB | NativeAOT 单文件 exe |
 | `CefGlue.BrowserProcess.runtime.win-x64.jit` | JIT | ~36 MB | 自包含，含 coreclr.dll |
 | `CefGlue.BrowserProcess.runtime.win-arm64` | AOT | ~7 MB | ARM64 的 NativeAOT |
-| `CefGlue.BrowserProcess.runtime.win-arm64.jit` | JIT | ~35 MB | ARM64 的自包含 |
-| `CefGlue.BrowserProcess.runtime.linux-x64` | AOT | ~50 MB | Linux 的 NativeAOT |
+| `CefGlue.BrowserProcess.runtime.win-arm64.jit` | JIT | ~34 MB | ARM64 的自包含 |
+| `CefGlue.BrowserProcess.runtime.linux-x64` | AOT | ~6 MB | Linux 的 NativeAOT |
 | `CefGlue.BrowserProcess.runtime.linux-x64.jit` | JIT | ~36 MB | Linux 的自包含 |
-| `CefGlue.BrowserProcess.runtime.linux-arm64` | AOT | ~50 MB | Linux ARM64 的 NativeAOT |
+| `CefGlue.BrowserProcess.runtime.linux-arm64` | AOT | ~6 MB | Linux ARM64 的 NativeAOT |
 | `CefGlue.BrowserProcess.runtime.linux-arm64.jit` | JIT | ~34 MB | Linux ARM64 的自包含 |
-| `CefGlue.BrowserProcess.runtime.osx-x64` | AOT | ~50 MB | macOS 的 NativeAOT |
+| `CefGlue.BrowserProcess.runtime.osx-x64` | AOT | ~6 MB | macOS 的 NativeAOT |
 | `CefGlue.BrowserProcess.runtime.osx-x64.jit` | JIT | ~35 MB | macOS 的自包含 |
-| `CefGlue.BrowserProcess.runtime.osx-arm64` | AOT | ~50 MB | macOS ARM64 的 NativeAOT |
+| `CefGlue.BrowserProcess.runtime.osx-arm64` | AOT | ~6 MB | macOS ARM64 的 NativeAOT |
 | `CefGlue.BrowserProcess.runtime.osx-arm64.jit` | JIT | ~33 MB | macOS ARM64 的自包含 |
 
 ### 元包（便捷安装）
@@ -56,7 +56,7 @@ BrowserProcess（CEF 渲染子进程）不再内嵌在 `CefGlue.Common` 中，�
 
 | 对比项 | AOT (NativeAOT) | JIT (自包含) |
 |--------|-----------------|-------------|
-| 文件大小 | ~7-50 MB 单文件 exe | ~33-70 MB (coreclr + 190+ DLL) |
+| 文件大小 | ~6-7 MB 单文件 exe | ~33-36 MB (coreclr + 190+ DLL) |
 | .NET 运行时依赖 | 无 | 自包含，不需系统安装运行时 |
 | 构建要求 | 需安装 AOT workload | 标准 .NET SDK 即可 |
 | 启动速度 | 更快 | 正常 |

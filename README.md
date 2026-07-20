@@ -36,14 +36,14 @@ The BrowserProcess (CEF renderer subprocess) is no longer bundled inside `CefGlu
 | `CefGlue.BrowserProcess.runtime.win-x64` | AOT | ~7 MB | NativeAOT, single .exe |
 | `CefGlue.BrowserProcess.runtime.win-x64.jit` | JIT | ~36 MB | Self-contained, with coreclr.dll |
 | `CefGlue.BrowserProcess.runtime.win-arm64` | AOT | ~7 MB | NativeAOT for ARM64 |
-| `CefGlue.BrowserProcess.runtime.win-arm64.jit` | JIT | ~35 MB | Self-contained for ARM64 |
-| `CefGlue.BrowserProcess.runtime.linux-x64` | AOT | ~50 MB | NativeAOT for Linux |
+| `CefGlue.BrowserProcess.runtime.win-arm64.jit` | JIT | ~34 MB | Self-contained for ARM64 |
+| `CefGlue.BrowserProcess.runtime.linux-x64` | AOT | ~6 MB | NativeAOT for Linux |
 | `CefGlue.BrowserProcess.runtime.linux-x64.jit` | JIT | ~36 MB | Self-contained for Linux |
-| `CefGlue.BrowserProcess.runtime.linux-arm64` | AOT | ~50 MB | NativeAOT for Linux ARM64 |
+| `CefGlue.BrowserProcess.runtime.linux-arm64` | AOT | ~6 MB | NativeAOT for Linux ARM64 |
 | `CefGlue.BrowserProcess.runtime.linux-arm64.jit` | JIT | ~34 MB | Self-contained for Linux ARM64 |
-| `CefGlue.BrowserProcess.runtime.osx-x64` | AOT | ~50 MB | NativeAOT for macOS |
+| `CefGlue.BrowserProcess.runtime.osx-x64` | AOT | ~6 MB | NativeAOT for macOS |
 | `CefGlue.BrowserProcess.runtime.osx-x64.jit` | JIT | ~35 MB | Self-contained for macOS |
-| `CefGlue.BrowserProcess.runtime.osx-arm64` | AOT | ~50 MB | NativeAOT for macOS ARM64 |
+| `CefGlue.BrowserProcess.runtime.osx-arm64` | AOT | ~6 MB | NativeAOT for macOS ARM64 |
 | `CefGlue.BrowserProcess.runtime.osx-arm64.jit` | JIT | ~33 MB | Self-contained for macOS ARM64 |
 
 ### Meta Packages (convenience)
@@ -57,7 +57,7 @@ The BrowserProcess (CEF renderer subprocess) is no longer bundled inside `CefGlu
 
 | Aspect | AOT (NativeAOT) | JIT (Self-contained) |
 |--------|-----------------|----------------------|
-| File size | ~7-50 MB single .exe | ~33-70 MB (coreclr + 190+ DLLs) |
+| File size | ~6-7 MB single .exe | ~33-36 MB (coreclr + 190+ DLLs) |
 | .NET runtime dependency | None | Self-contained, no system dependency |
 | Build requirement | AOT workload installed | Standard .NET SDK only |
 | Startup time | Faster | Normal |
