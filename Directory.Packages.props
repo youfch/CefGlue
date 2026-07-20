@@ -31,7 +31,7 @@
         <PackageVersion Include="cef.redist.linuxarm64" Version="$(CefRedistLinuxVersion)" />
         
         <PackageVersion Include="cef.redist.osx64" Version="$(CefRedistOSXVersion)" />
-        <PackageVersion Include="cef.redist.osx.arm64" Version="$(CefRedistOSXVersion)" />
+        <PackageVersion Include="cef.redist.osxarm64" Version="$(CefRedistOSXVersion)" />
 
         <PackageVersion Include="nunit" Version="3.12.0" />
         <PackageVersion Include="NUnit3TestAdapter" Version="3.17.0" />
