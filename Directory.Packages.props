@@ -31,7 +31,7 @@
         <PackageVersion Include="cef.redist.linuxarm64" Version="$(CefRedistLinuxVersion)" />
         
         <PackageVersion Include="cef.redist.osx64" Version="$(CefRedistOSXVersion)" />
-        <PackageVersion Include="cef.redist.osx.arm64" Version="$(CefRedistOSXVersion)" />
+        <PackageVersion Include="cef.redist.osxarm64" Version="$(CefRedistOSXVersion)" />
 
         <PackageVersion Include="nunit" Version="3.12.0" />
         <PackageVersion Include="NUnit3TestAdapter" Version="3.17.0" />
@@ -39,6 +39,21 @@
         <PackageVersion Include="Moq" Version="4.10.1" />
         <PackageVersion Include="System.Data.DataSetExtensions" Version="4.5.0" />
         <PackageVersion Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
+
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.win-x64" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.win-x64.jit" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.win-arm64" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.win-arm64.jit" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.linux-x64" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.linux-x64.jit" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.linux-arm64" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.linux-arm64.jit" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-x64" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-x64.jit" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-arm64" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-arm64.jit" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime.jit" Version="$(Version)" />
     </ItemGroup>
 
     <ItemGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(DefineConstants), '(^|;)HAS_NLOG($|;)'))">

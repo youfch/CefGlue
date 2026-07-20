@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(DotnetVersion)</TargetFramework>
+    <PackageId>CefGlue.BrowserProcess.runtime</PackageId>
+    <Version>$(Version)</Version>
+    <Authors>$(Authors)</Authors>
+    <Description>Meta package - includes all platform-specific BrowserProcess NativeAOT binaries. Install alongside CefGlue.Common.</Description>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>$(NoWarn);NU5100;NU5118</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CefGlue.BrowserProcess.runtime.win-x64\CefGlue.BrowserProcess.runtime.win-x64.csproj" />
+    <ProjectReference Include="..\CefGlue.BrowserProcess.runtime.win-arm64\CefGlue.BrowserProcess.runtime.win-arm64.csproj" />
+    <ProjectReference Include="..\CefGlue.BrowserProcess.runtime.linux-x64\CefGlue.BrowserProcess.runtime.linux-x64.csproj" />
+    <ProjectReference Include="..\CefGlue.BrowserProcess.runtime.linux-arm64\CefGlue.BrowserProcess.runtime.linux-arm64.csproj" />
+    <ProjectReference Include="..\CefGlue.BrowserProcess.runtime.osx-x64\CefGlue.BrowserProcess.runtime.osx-x64.csproj" />
+    <ProjectReference Include="..\CefGlue.BrowserProcess.runtime.osx-arm64\CefGlue.BrowserProcess.runtime.osx-arm64.csproj" />
+  </ItemGroup>
+</Project>

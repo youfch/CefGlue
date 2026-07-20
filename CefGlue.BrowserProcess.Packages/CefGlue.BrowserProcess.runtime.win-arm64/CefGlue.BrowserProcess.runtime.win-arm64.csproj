@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(DotnetVersion)</TargetFramework>
+    <PackageId>CefGlue.BrowserProcess.runtime.win-arm64</PackageId>
+    <Version>$(Version)</Version>
+    <Authors>$(Authors)</Authors>
+    <Description>NativeAOT BrowserProcess binary for win-arm64 (~11 MB single .exe). Install alongside CefGlue.Common.</Description>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>$(NoWarn);NU5100;NU5118</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+        <None Include="build\**" Pack="True" PackagePath="build\" />
+        <None Include="build\CefGlue.BrowserProcess.runtime.win-arm64.targets" Pack="True" PackagePath="buildTransitive\CefGlue.BrowserProcess.runtime.win-arm64.targets" />
+  </ItemGroup>
+</Project>

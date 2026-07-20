@@ -7,7 +7,7 @@
         <CefRedistVersion>149.0.4</CefRedistVersion>
         <CefRedistOSXVersion>149.0.4</CefRedistOSXVersion>
         <CefRedistLinuxVersion>149.0.4</CefRedistLinuxVersion>
-        <Platforms>x64;ARM64</Platforms>
+        <Platforms>AnyCPU;x64;ARM64</Platforms>
         <Configurations>Debug;DebugWindowlessRender;Release;ReleaseWPFAvalonia</Configurations>
     </PropertyGroup>
 

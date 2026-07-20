@@ -1,0 +1,23 @@
+<Project>
+    <PropertyGroup>
+        <CefGlueBrowserProcessDir Condition="'$(CefGlueBrowserProcessDir)' == ''">CefGlueBrowserProcess</CefGlueBrowserProcessDir>
+    </PropertyGroup>
+
+    <Target Name="CopyCefGlueBrowserProcess_win-x64_jit" AfterTargets="AfterBuild"
+            Condition="'$(CefGlueTargetPlatform)' == 'win-x64'">
+        <ItemGroup>
+            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\win-x64.jit\*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
+    </Target>
+
+    <Target Name="CopyCefGlueBrowserProcess_win-x64_jitPublish" AfterTargets="Publish"
+            Condition="'$(CefGlueTargetPlatform)' == 'win-x64'">
+        <ItemGroup>
+            <_CefGlueBpPublishFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*.*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(_CefGlueBpPublishFiles)"
+              DestinationFiles="@(_CefGlueBpPublishFiles->'$(PublishDir)$(CefGlueBrowserProcessDir)\%(RecursiveDir)%(FileName)%(Extension)')"
+              SkipUnchangedFiles="true" />
+    </Target>
+</Project>
