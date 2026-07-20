@@ -1,24 +1,22 @@
 <Project>
     <PropertyGroup>
-        <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
+        <CefGlueBrowserProcessDir Condition="'$(CefGlueBrowserProcessDir)' == ''">CefGlueBrowserProcess</CefGlueBrowserProcessDir>
     </PropertyGroup>
-    <Target Name="CopyCefGlueBrowserProcess_Linux_x64" AfterTargets="AfterBuild"
+
+    <Target Name="CopyCefGlueBrowserProcess_linux-x64" AfterTargets="AfterBuild"
             Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'">
         <ItemGroup>
-<_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\linux-x64\*"
-							 Exclude="$(MSBuildThisFileDirectory)..\build\bin\linux-x64\*.pdb" />
+            <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\linux-x64\*" />
+            <_CefGlueBpFiles Remove="$(MSBuildThisFileDirectory)..\build\bin\linux-x64\*.pdb" />
         </ItemGroup>
         <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
-        <ItemGroup>
-            <FileWrites Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
-            <_CefGlueBpOutputFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
-            <ResolvedFileToPublish Include="@(_CefGlueBpOutputFiles)">
-                <RelativePath>CefGlueBrowserProcess\%(FileName)%(Extension)</RelativePath>
-                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-            </ResolvedFileToPublish>
-        </ItemGroup>
     </Target>
-    <Target Name="CopyCefGlueBrowserProcess_Linux_x64Publish" AfterTargets="Publish"
-            DependsOnTargets="CopyCefGlueBrowserProcess_Linux_x64"
-            Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'" />
+
+    <Target Name="CopyCefGlueBrowserProcess_linux-x64Publish" AfterTargets="Publish"
+            Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'">
+        <ItemGroup>
+            <_CefGlueBpPublishFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(_CefGlueBpPublishFiles)" DestinationFolder="$(PublishDir)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
+    </Target>
 </Project>

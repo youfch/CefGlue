@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(DotnetVersion)</TargetFramework>
     <PackageId>CefGlue.BrowserProcess.runtime.linux-x64</PackageId>

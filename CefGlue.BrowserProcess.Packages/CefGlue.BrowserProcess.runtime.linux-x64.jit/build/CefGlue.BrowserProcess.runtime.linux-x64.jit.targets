@@ -1,23 +1,17 @@
 <Project>
     <PropertyGroup>
-        <CefGlueBrowserProcessDir>CefGlueBrowserProcess</CefGlueBrowserProcessDir>
+        <CefGlueBrowserProcessDir Condition="'$(CefGlueBrowserProcessDir)' == ''">CefGlueBrowserProcess</CefGlueBrowserProcessDir>
     </PropertyGroup>
-    <Target Name="CopyCefGlueBrowserProcess_Linux_x64_jit" AfterTargets="AfterBuild"
+
+    <Target Name="CopyCefGlueBrowserProcess_linux-x64_jit" AfterTargets="AfterBuild"
             Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'">
         <ItemGroup>
             <_CefGlueBpFiles Include="$(MSBuildThisFileDirectory)..\build\bin\linux-x64.jit\*" />
         </ItemGroup>
         <Copy SourceFiles="@(_CefGlueBpFiles)" DestinationFolder="$(OutputPath)$(CefGlueBrowserProcessDir)" SkipUnchangedFiles="true" />
-        <ItemGroup>
-            <FileWrites Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
-            <_CefGlueBpOutputFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\**\*" />
-            <ResolvedFileToPublish Include="@(_CefGlueBpOutputFiles)">
-                <RelativePath>CefGlueBrowserProcess\%(FileName)%(Extension)</RelativePath>
-                <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-            </ResolvedFileToPublish>
-        </ItemGroup>
     </Target>
-    <Target Name="CopyCefGlueBrowserProcess_Linux_x64_jitPublish" AfterTargets="Publish"
+
+    <Target Name="CopyCefGlueBrowserProcess_linux-x64_jitPublish" AfterTargets="Publish"
             Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'">
         <ItemGroup>
             <_CefGlueBpPublishFiles Include="$(OutputPath)$(CefGlueBrowserProcessDir)\*" />

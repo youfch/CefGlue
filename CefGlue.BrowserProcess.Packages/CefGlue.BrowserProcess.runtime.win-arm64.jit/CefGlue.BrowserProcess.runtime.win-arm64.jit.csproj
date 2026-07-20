@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(DotnetVersion)</TargetFramework>
     <PackageId>CefGlue.BrowserProcess.runtime.win-arm64.jit</PackageId>

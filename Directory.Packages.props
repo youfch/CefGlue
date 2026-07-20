@@ -52,6 +52,7 @@
         <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-x64.jit" Version="$(Version)" />
         <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-arm64" Version="$(Version)" />
         <PackageVersion Include="CefGlue.BrowserProcess.runtime.osx-arm64.jit" Version="$(Version)" />
+        <PackageVersion Include="CefGlue.BrowserProcess.runtime" Version="$(Version)" />
         <PackageVersion Include="CefGlue.BrowserProcess.runtime.jit" Version="$(Version)" />
     </ItemGroup>
 

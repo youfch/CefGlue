@@ -5,13 +5,18 @@
           Map CefGlueTargetPlatform -> NuGet Pkg property name for the corresponding platform sub-package.
           NuGet auto-generates Pkg<PackageId> where dots become underscores.
         -->
-        _CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'win-x64'">CefGlue_BrowserProcess_runtime_win_x64</_CefGlueBpPkgName>
-        _CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'win-arm64'">CefGlue_BrowserProcess_runtime_win_arm64</_CefGlueBpPkgName>
-        _CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'">CefGlue_BrowserProcess_runtime_linux_x64</_CefGlueBpPkgName>
-        _CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'linux-arm64'">CefGlue_BrowserProcess_runtime_linux_arm64</_CefGlueBpPkgName>
-        _CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'osx-x64'">CefGlue_BrowserProcess_runtime_osx_x64</_CefGlueBpPkgName>
-        _CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'osx-arm64'">CefGlue_BrowserProcess_runtime_osx_arm64</_CefGlueBpPkgName>
+        <_CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'win-x64'">CefGlue_BrowserProcess_runtime_win_x64</_CefGlueBpPkgName>
+        <_CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'win-arm64'">CefGlue_BrowserProcess_runtime_win_arm64</_CefGlueBpPkgName>
+        <_CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'">CefGlue_BrowserProcess_runtime_linux_x64</_CefGlueBpPkgName>
+        <_CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'linux-arm64'">CefGlue_BrowserProcess_runtime_linux_arm64</_CefGlueBpPkgName>
+        <_CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'osx-x64'">CefGlue_BrowserProcess_runtime_osx_x64</_CefGlueBpPkgName>
+        <_CefGlueBpPkgName Condition="'$(CefGlueTargetPlatform)' == 'osx-arm64'">CefGlue_BrowserProcess_runtime_osx_arm64</_CefGlueBpPkgName>
         <!-- The build\bin\<rid> sub-folder inside the sub-package that contains the published binaries -->
-        _CefGlueBpBinDir>$(Pkg$(_CefGlueBpPkgName))\build\bin\$(CefGlueTargetPlatform)\</_CefGlueBpBinDir>
+        <_CefGlueBpBinDir Condition="'$(CefGlueTargetPlatform)' == 'win-x64'">$(PkgCefGlue_BrowserProcess_runtime_win_x64)\build\bin\win-x64\</_CefGlueBpBinDir>
+        <_CefGlueBpBinDir Condition="'$(CefGlueTargetPlatform)' == 'win-arm64'">$(PkgCefGlue_BrowserProcess_runtime_win_arm64)\build\bin\win-arm64\</_CefGlueBpBinDir>
+        <_CefGlueBpBinDir Condition="'$(CefGlueTargetPlatform)' == 'linux-x64'">$(PkgCefGlue_BrowserProcess_runtime_linux_x64)\build\bin\linux-x64\</_CefGlueBpBinDir>
+        <_CefGlueBpBinDir Condition="'$(CefGlueTargetPlatform)' == 'linux-arm64'">$(PkgCefGlue_BrowserProcess_runtime_linux_arm64)\build\bin\linux-arm64\</_CefGlueBpBinDir>
+        <_CefGlueBpBinDir Condition="'$(CefGlueTargetPlatform)' == 'osx-x64'">$(PkgCefGlue_BrowserProcess_runtime_osx_x64)\build\bin\osx-x64\</_CefGlueBpBinDir>
+        <_CefGlueBpBinDir Condition="'$(CefGlueTargetPlatform)' == 'osx-arm64'">$(PkgCefGlue_BrowserProcess_runtime_osx_arm64)\build\bin\osx-arm64\</_CefGlueBpBinDir>
     </PropertyGroup>
 </Project>

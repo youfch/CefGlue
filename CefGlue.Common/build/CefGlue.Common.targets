@@ -7,38 +7,38 @@
         <CefGlueTargetPlatform>$(RuntimeIdentifier)</CefGlueTargetPlatform>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(CefGlueTargetPlatform)' == 'osx-x64'">
+        <_CefRedistOSXDir>$(Pkgcef_redist_osx64)\CEF\</_CefRedistOSXDir>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(CefGlueTargetPlatform)' == 'osx-arm64'">
+        <_CefRedistOSXDir>$(Pkgcef_redist_osx_arm64)\CEF\</_CefRedistOSXDir>
+    </PropertyGroup>
+
     <ItemGroup Condition="'$(CefGlueTargetPlatform)' == 'osx-x64' OR '$(CefGlueTargetPlatform)' == 'osx-arm64'">
-        <None Condition="'$(CefGlueTargetPlatform)' == 'osx-x64'" Include="@(CefRedistOSX64)">
+        <None Include="$(_CefRedistOSXDir)**\*.*">
             <Visible>false</Visible>
             <Link>$(OutputDirectory)%(RecursiveDir)%(FileName)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
             <PublishState>Included</PublishState>
         </None>
-        <None Condition="'$(CefGlueTargetPlatform)' == 'osx-arm64'" Include="@(CefRedistOSXARM64)">
+        <None Include="$(_CefRedistOSXDir)libEGL.dylib">
             <Visible>false</Visible>
-            <Link>$(OutputDirectory)%(RecursiveDir)%(FileName)%(Extension)</Link>
+            <Link>$(OutputDirectory)$(CefGlueBrowserProcessDir)\%(FileName)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
             <PublishState>Included</PublishState>
         </None>
-        <None Include="$(OutDir)\libEGL.dylib">
+        <None Include="$(_CefRedistOSXDir)libGLESv2.dylib">
             <Visible>false</Visible>
-            <Link>$(OutputDirectory)$(CefGlueBrowserProcessDir)\%(RecursiveDir)%(FileName)%(Extension)</Link>
+            <Link>$(OutputDirectory)$(CefGlueBrowserProcessDir)\%(FileName)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
             <PublishState>Included</PublishState>
         </None>
-        <None Include="$(OutDir)\libGLESv2.dylib">
+        <None Include="$(_CefRedistOSXDir)libvk_swiftshader.dylib">
             <Visible>false</Visible>
-            <Link>$(OutputDirectory)$(CefGlueBrowserProcessDir)\%(RecursiveDir)%(FileName)%(Extension)</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-            <PublishState>Included</PublishState>
-        </None>
-        <None Include="$(OutDir)\libvk_swiftshader.dylib">
-            <Visible>false</Visible>
-            <Link>$(OutputDirectory)$(CefGlueBrowserProcessDir)\%(RecursiveDir)%(FileName)%(Extension)</Link>
+            <Link>$(OutputDirectory)$(CefGlueBrowserProcessDir)\%(FileName)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
             <PublishState>Included</PublishState>
@@ -98,12 +98,14 @@
                 <Visible>false</Visible>
                 <Link>runtimes\win-x64\native\locales\%(RecursiveDir)%(FileName)%(Extension)</Link>
                 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
                 <PublishState>Included</PublishState>
             </None>
             <None Include="@(CefRuntimeWinArm64Locales)"  Condition="'$(CefGlueTargetPlatform)' == 'win-arm64'">
                 <Visible>false</Visible>
                 <Link>runtimes\win-arm64\native\locales\%(RecursiveDir)%(FileName)%(Extension)</Link>
                 <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
                 <PublishState>Included</PublishState>
             </None>
         </ItemGroup>
