@@ -233,7 +233,7 @@ jobs:
           --configfile nuget-source/NuGet.config
 
       - name: Build CefGlue.Common (ARM64)
-        run: dotnet build CefGlue.Common/CefGlue.Common.csproj -c Release -p:Platform=ARM64 -p:CI=True --no-restore --configfile nuget-source/NuGet.config
+        run: dotnet build CefGlue.Common/CefGlue.Common.csproj -c Release -p:Platform=ARM64 -p:CI=True --configfile nuget-source/NuGet.config
 
       - name: Pack CefGlue.Common (ARM64)
         run: >
