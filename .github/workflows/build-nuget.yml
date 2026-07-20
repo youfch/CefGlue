@@ -223,36 +223,36 @@ jobs:
           path: nuget-source
 
       - name: Restore
-        run: dotnet restore CefGlue.Common/CefGlue.Common.csproj --configfile nuget-source/NuGet.config -p:Platform=x64 -p:CI=True
+        run: dotnet restore CefGlue.Common/CefGlue.Common.csproj --configfile nuget-source/NuGet.config -p:Platform=x64 -p:CI=true
 
       - name: Pack CefGlue.Common
         run: >
           dotnet pack CefGlue.Common/CefGlue.Common.csproj
-          -c Release -p:Platform=x64  -p:CI=True -p:GeneratePackageOnBuild=false -o Nuget/output
+          -c Release -p:Platform=x64  -p:CI=true -p:GeneratePackageOnBuild=false -o Nuget/output
           -p:Version=${{ needs.version.outputs.pkg_version }}
           --configfile nuget-source/NuGet.config
 
       - name: Build CefGlue.Common (ARM64)
-        run: dotnet build CefGlue.Common/CefGlue.Common.csproj -c Release -p:Platform=ARM64 -p:CI=True --configfile nuget-source/NuGet.config
+        run: dotnet build CefGlue.Common/CefGlue.Common.csproj -c Release -p:Platform=ARM64 -p:CI=true --configfile nuget-source/NuGet.config
 
       - name: Pack CefGlue.Common (ARM64)
         run: >
           dotnet pack CefGlue.Common/CefGlue.Common.csproj
-          -c Release -p:Platform=ARM64  -p:CI=True -p:GeneratePackageOnBuild=false -o Nuget/output --no-build
+          -c Release -p:Platform=ARM64  -p:CI=true -p:GeneratePackageOnBuild=false -o Nuget/output --no-build
           -p:Version=${{ needs.version.outputs.pkg_version }}
           --configfile nuget-source/NuGet.config
 
       - name: Pack CefGlue.WPF
         run: >
           dotnet pack CefGlue.WPF/CefGlue.WPF.csproj
-          -c Release -p:Platform=x64  -p:CI=True -p:GeneratePackageOnBuild=false -o Nuget/output
+          -c Release -p:Platform=x64  -p:CI=true -p:GeneratePackageOnBuild=false -o Nuget/output
           -p:Version=${{ needs.version.outputs.pkg_version }}
           --configfile nuget-source/NuGet.config
 
       - name: Pack CefGlue.Avalonia
         run: >
           dotnet pack CefGlue.Avalonia/CefGlue.Avalonia.csproj
-          -c Release -p:Platform=x64  -p:CI=True -p:GeneratePackageOnBuild=false -o Nuget/output
+          -c Release -p:Platform=x64  -p:CI=true -p:GeneratePackageOnBuild=false -o Nuget/output
           -p:Version=${{ needs.version.outputs.pkg_version }}
           --configfile nuget-source/NuGet.config
 
