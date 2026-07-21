@@ -21,10 +21,11 @@ CefGlue 让你在 .NET 应用中嵌入 Chromium 浏览器。它是 [CEF](https:/
 ### 核心包
 
 | 包名 | 说明 |
-|---------|------|
-| `CefGlue.Common` | 核心托管 DLL。不包含 BrowserProcess。 |
+|------|------|
+| `CefGlue.Common` | 核心托管 DLL，不包含 BrowserProcess。 |
+| `CefGlue.Common.ARM64` | ARM64 版核心托管 DLL（DLL 相同，CEF 依赖不同）。 |
 | `CefGlue.Avalonia` | Avalonia Web 浏览器控件。 |
-| `CefGlue.WPF` | WPF Web 浏览器控件。 |
+| `CefGlue.WPF` | WPF Web 浏览器控件（仅 Windows）。 |
 
 ### BrowserProcess 运行时包
 
@@ -63,21 +64,83 @@ BrowserProcess（CEF 渲染子进程）不再内嵌在 `CefGlue.Common` 中，�
 
 ## 快速开始
 
-### 1. 安装 CefGlue 和 CEF 原生二进制
+### 1. 安装 CefGlue 托管包
 
 ```xml
 <ItemGroup>
-  <!-- CefGlue 托管包 -->
+  <!-- 二选一 -->
   <PackageReference Include="CefGlue.Avalonia" Version="149.7827.156" />
   <!-- 或: <PackageReference Include="CefGlue.WPF" Version="149.7827.156" /> -->
 
-  <!-- CEF 原生二进制（必需） -->
-  <PackageReference Include="chromiumembeddedframework.runtime.win-x64" Version="149.0.6" />
-  <!-- 或: <PackageReference Include="chromiumembeddedframework.runtime" Version="149.0.6" /> -->
+  <!-- CefGlue.Common 会被传递引用，也可显式添加 -->
+  <PackageReference Include="CefGlue.Common" Version="149.7827.156" />
 </ItemGroup>
 ```
 
-### 2. 安装 BrowserProcess 运行时包
+### 2. 安装 CEF 原生二进制
+
+CEF 原生二进制通过独立的 NuGet 包分发，来源因平台而异：
+
+| 平台 | 包名 | 来源 |
+|------|------|------|
+| Windows x64 | `chromiumembeddedframework.runtime.win-x64` | [nuget.org](https://www.nuget.org) |
+| Windows ARM64 | `chromiumembeddedframework.runtime.win-arm64` | [nuget.org](https://www.nuget.org) |
+| Linux x64 | `cef.redist.linux64` | [GitHub Releases](https://github.com/youfch/cef.redist.linux/releases) |
+| Linux ARM64 | `cef.redist.linuxarm64` | [GitHub Releases](https://github.com/youfch/cef.redist.linux/releases) |
+| macOS x64 | `cef.redist.osx64` | [GitHub Releases](https://github.com/youfch/cef.redist.osx/releases) |
+| macOS ARM64 | `cef.redist.osxarm64` | [GitHub Releases](https://github.com/youfch/cef.redist.osx/releases) |
+
+详细说明请参阅 [CEF_SETUP.md](./CEF_SETUP.md)（英文）。
+
+**Windows（从 nuget.org）：**
+
+```xml
+<ItemGroup>
+  <PackageReference Include="chromiumembeddedframework.runtime.win-x64" Version="149.0.6" />
+  <!-- 或元包： -->
+  <PackageReference Include="chromiumembeddedframework.runtime" Version="149.0.6" />
+</ItemGroup>
+```
+
+**Linux（从 GitHub Releases）：**
+
+在 `NuGet.config` 中添加包源：
+
+```xml
+<packageSources>
+  <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  <add key="cef-redist-linux" value="https://github.com/youfch/cef.redist.linux/releases/download/v149.0.4/index.json" />
+</packageSources>
+```
+
+然后添加包引用：
+
+```xml
+<ItemGroup>
+  <PackageReference Include="cef.redist.linux64" Version="149.0.4" />
+</ItemGroup>
+```
+
+**macOS（从 GitHub Releases）：**
+
+在 `NuGet.config` 中添加包源：
+
+```xml
+<packageSources>
+  <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  <add key="cef-redist-osx" value="https://github.com/youfch/cef.redist.osx/releases/download/v149.0.4/index.json" />
+</packageSources>
+```
+
+然后添加包引用：
+
+```xml
+<ItemGroup>
+  <PackageReference Include="cef.redist.osx64" Version="149.0.4" />
+</ItemGroup>
+```
+
+### 3. 安装 BrowserProcess 运行时包
 
 选择以下方式之一：
 
@@ -115,7 +178,7 @@ BrowserProcess（CEF 渲染子进程）不再内嵌在 `CefGlue.Common` 中，�
 <PackageReference Include="CefGlue.BrowserProcess.runtime.win-x64.jit" Version="149.7827.156" />
 ```
 
-### 3. 构建和运行
+### 4. 构建和运行
 
 ```bash
 dotnet build
@@ -124,7 +187,7 @@ dotnet run
 
 BrowserProcess 在构建和发布时会自动复制到 `$(OutputPath)/CefGlueBrowserProcess/` 目录。
 
-### 4. （可选）AOT 发布你的应用
+### 5. （可选）AOT 发布你的应用
 
 ```bash
 dotnet publish -c Release -r win-x64 -p:PublishAot=true
@@ -142,8 +205,10 @@ CefGlue.BrowserProcess.runtime.win-x64 (AOT, ~7 MB)
 
 构建输出:
   bin/Debug/net10.0/
+    ├── locales/                     ← CEF 本地化文件
     ├── CefGlueBrowserProcess/
     │   └── Xilium.CefGlue.BrowserProcess.exe  ← 自动复制
+    ├── libcef.dll (或 .so/.dylib)   ← CEF 原生库
     ├── Xilium.CefGlue.Common.dll
     └── ...
 ```

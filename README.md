@@ -24,8 +24,9 @@ See [LINUX.md](./LINUX.md) for more information about issues and tested distribu
 | Package | Description |
 |---------|-------------|
 | `CefGlue.Common` | Core managed DLLs. No BrowserProcess bundled. |
+| `CefGlue.Common.ARM64` | Core managed DLLs for ARM64 (same DLLs, different CEF native dependency). |
 | `CefGlue.Avalonia` | Avalonia web browser control. |
-| `CefGlue.WPF` | WPF web browser control. |
+| `CefGlue.WPF` | WPF web browser control (Windows only). |
 
 ### BrowserProcess Runtime Packages
 
@@ -64,21 +65,83 @@ The BrowserProcess (CEF renderer subprocess) is no longer bundled inside `CefGlu
 
 ## Getting Started
 
-### 1. Install CefGlue and CEF native binaries
+### 1. Install CefGlue managed packages
 
 ```xml
 <ItemGroup>
-  <!-- CefGlue managed packages -->
+  <!-- Choose one: -->
   <PackageReference Include="CefGlue.Avalonia" Version="149.7827.156" />
   <!-- or: <PackageReference Include="CefGlue.WPF" Version="149.7827.156" /> -->
 
-  <!-- CEF native binaries (required) -->
-  <PackageReference Include="chromiumembeddedframework.runtime.win-x64" Version="149.0.6" />
-  <!-- or: <PackageReference Include="chromiumembeddedframework.runtime" Version="149.0.6" /> -->
+  <!-- CefGlue.Common is included transitively, but you can add it explicitly: -->
+  <PackageReference Include="CefGlue.Common" Version="149.7827.156" />
 </ItemGroup>
 ```
 
-### 2. Install BrowserProcess runtime package
+### 2. Install CEF native binaries
+
+CEF native binaries are distributed through separate NuGet packages. The source depends on your platform:
+
+| Platform | Package | Source |
+|----------|---------|--------|
+| Windows | `chromiumembeddedframework.runtime.win-x64` | [nuget.org](https://www.nuget.org) |
+| Windows ARM64 | `chromiumembeddedframework.runtime.win-arm64` | [nuget.org](https://www.nuget.org) |
+| Linux x64 | `cef.redist.linux64` | [GitHub Releases](https://github.com/youfch/cef.redist.linux/releases) |
+| Linux ARM64 | `cef.redist.linuxarm64` | [GitHub Releases](https://github.com/youfch/cef.redist.linux/releases) |
+| macOS x64 | `cef.redist.osx64` | [GitHub Releases](https://github.com/youfch/cef.redist.osx/releases) |
+| macOS ARM64 | `cef.redist.osxarm64` | [GitHub Releases](https://github.com/youfch/cef.redist.osx/releases) |
+
+See [CEF_SETUP.md](./CEF_SETUP.md) for details on setting up CEF native binaries for each platform.
+
+**Windows (from nuget.org):**
+
+```xml
+<ItemGroup>
+  <PackageReference Include="chromiumembeddedframework.runtime.win-x64" Version="149.0.6" />
+  <!-- or the meta package that includes all platforms: -->
+  <PackageReference Include="chromiumembeddedframework.runtime" Version="149.0.6" />
+</ItemGroup>
+```
+
+**Linux (from GitHub Releases):**
+
+First, add the GitHub Releases NuGet source to your `NuGet.config`:
+
+```xml
+<packageSources>
+  <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  <add key="cef-redist-linux" value="https://github.com/youfch/cef.redist.linux/releases/download/v149.0.4/index.json" />
+</packageSources>
+```
+
+Then add the package reference:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="cef.redist.linux64" Version="149.0.4" />
+</ItemGroup>
+```
+
+**macOS (from GitHub Releases):**
+
+Add the GitHub Releases NuGet source:
+
+```xml
+<packageSources>
+  <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  <add key="cef-redist-osx" value="https://github.com/youfch/cef.redist.osx/releases/download/v149.0.4/index.json" />
+</packageSources>
+```
+
+Then add the package reference:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="cef.redist.osx64" Version="149.0.4" />
+</ItemGroup>
+```
+
+### 3. Install BrowserProcess runtime package
 
 Choose one of the following patterns:
 
@@ -116,7 +179,7 @@ Choose one of the following patterns:
 <PackageReference Include="CefGlue.BrowserProcess.runtime.win-x64.jit" Version="149.7827.156" />
 ```
 
-### 3. Build and run
+### 4. Build and run
 
 ```bash
 dotnet build
@@ -125,7 +188,7 @@ dotnet run
 
 The BrowserProcess is automatically copied to `$(OutputPath)/CefGlueBrowserProcess/` during build and publish.
 
-### 4. (Optional) AOT publish your own app
+### 5. (Optional) AOT publish your own app
 
 ```bash
 dotnet publish -c Release -r win-x64 -p:PublishAot=true
@@ -143,8 +206,10 @@ CefGlue.BrowserProcess.runtime.win-x64 (AOT, ~7 MB)
 
 Build output:
   bin/Debug/net10.0/
+    ├── locales/                     ← CEF locale files
     ├── CefGlueBrowserProcess/
     │   └── Xilium.CefGlue.BrowserProcess.exe  ← Auto-copied
+    ├── libcef.dll (or .so/.dylib)   ← CEF native library
     ├── Xilium.CefGlue.Common.dll
     └── ...
 ```
