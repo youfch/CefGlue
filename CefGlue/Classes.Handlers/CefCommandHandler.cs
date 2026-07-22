@@ -17,8 +17,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            return OnChromeCommand(m_browser, command_id, disposition) ? 1 : 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                return OnChromeCommand(m_browser, command_id, disposition) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -37,9 +39,11 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var result = IsChromeAppMenuItemVisible(m_browser, command_id);
-            return result ? 1 : 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var result = IsChromeAppMenuItemVisible(m_browser, command_id);
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -55,9 +59,11 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var result = IsChromeAppMenuItemEnabled(m_browser, command_id);
-            return result ? 1 : 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var result = IsChromeAppMenuItemEnabled(m_browser, command_id);
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>

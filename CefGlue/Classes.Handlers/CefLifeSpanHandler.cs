@@ -17,39 +17,41 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-            var m_targetUrl = cef_string_t.ToString(target_url);
-            var m_targetFrameName = cef_string_t.ToString(target_frame_name);
-            var m_userGesture = user_gesture != 0;
-            var m_popupFeatures = new CefPopupFeatures(popupFeatures);
-            var m_windowInfo = CefWindowInfo.FromNative(windowInfo);
-            var m_client = CefClient.FromNative(*client);
-            var m_settings = new CefBrowserSettings(settings);
-            var m_extraInfo = CefDictionaryValue.FromNativeOrNull(*extra_info);  // TODO dispose?
-            var m_noJavascriptAccess = (*no_javascript_access) != 0;
-
-            var o_extraInfo = m_extraInfo;
-            var o_client = m_client;
-            var result = OnBeforePopup(m_browser, m_frame, popup_id, m_targetUrl, m_targetFrameName, target_disposition, m_userGesture, m_popupFeatures, m_windowInfo, ref m_client, m_settings, ref m_extraInfo, ref m_noJavascriptAccess);
-
-            if ((object)o_client != m_client && m_client != null)
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
             {
-                *client = m_client.ToNative();
+                var m_targetUrl = cef_string_t.ToString(target_url);
+                var m_targetFrameName = cef_string_t.ToString(target_frame_name);
+                var m_userGesture = user_gesture != 0;
+                var m_popupFeatures = new CefPopupFeatures(popupFeatures);
+                var m_windowInfo = CefWindowInfo.FromNative(windowInfo);
+                var m_client = CefClient.FromNative(*client);
+                var m_settings = new CefBrowserSettings(settings);
+                var m_extraInfo = CefDictionaryValue.FromNativeOrNull(*extra_info);  // TODO dispose?
+                var m_noJavascriptAccess = (*no_javascript_access) != 0;
+
+                var o_extraInfo = m_extraInfo;
+                var o_client = m_client;
+                var result = OnBeforePopup(m_browser, m_frame, popup_id, m_targetUrl, m_targetFrameName, target_disposition, m_userGesture, m_popupFeatures, m_windowInfo, ref m_client, m_settings, ref m_extraInfo, ref m_noJavascriptAccess);
+
+                if ((object)o_client != m_client && m_client != null)
+                {
+                    *client = m_client.ToNative();
+                }
+
+                if ((object)o_extraInfo != m_extraInfo)
+                {
+                    *extra_info = m_extraInfo != null ? m_extraInfo.ToNative() : null;
+                }
+
+                *no_javascript_access = m_noJavascriptAccess ? 1 : 0;
+
+                m_popupFeatures.Dispose();
+                m_windowInfo.Dispose();
+                m_settings.Dispose();
+
+                return result ? 1 : 0;
             }
-
-            if ((object)o_extraInfo != m_extraInfo)
-            {
-                *extra_info = m_extraInfo != null ? m_extraInfo.ToNative() : null;
-            }
-            
-            *no_javascript_access = m_noJavascriptAccess ? 1 : 0;
-
-            m_popupFeatures.Dispose();
-            m_windowInfo.Dispose();
-            m_settings.Dispose();
-
-            return result ? 1 : 0;
         }
 
         /// <summary>
@@ -93,8 +95,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            OnAfterCreated(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnAfterCreated(m_browser);
+            }
         }
         
         /// <summary>
@@ -109,7 +113,10 @@
 
         private void on_before_popup_aborted(cef_life_span_handler_t* self, cef_browser_t* browser, int popup_id)
         {
-            OnBeforePopupAborted(CefBrowser.FromNative(browser),popup_id);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnBeforePopupAborted(m_browser, popup_id);
+            }
         }
 
         /// <summary>
@@ -135,32 +142,34 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_windowInfo = CefWindowInfo.FromNative(windowInfo);
-            var m_client = CefClient.FromNative(*client);
-            var m_settings = new CefBrowserSettings(settings);
-            var m_extraInfo = CefDictionaryValue.FromNativeOrNull(*extra_info);  // TODO dispose?
-            var m_useDefaultWindow = (*use_default_window) != 0;
-
-            var o_extraInfo = m_extraInfo;
-            var o_client = m_client;
-
-            OnBeforeDevToolsPopup(m_browser, m_windowInfo, ref m_client, m_settings, ref m_extraInfo, ref m_useDefaultWindow);
-
-            if ((object)o_client != m_client && m_client != null)
+            using (var m_browser = CefBrowser.FromNative(browser))
             {
-                *client = m_client.ToNative();
-            }
+                var m_windowInfo = CefWindowInfo.FromNative(windowInfo);
+                var m_client = CefClient.FromNative(*client);
+                var m_settings = new CefBrowserSettings(settings);
+                var m_extraInfo = CefDictionaryValue.FromNativeOrNull(*extra_info);  // TODO dispose?
+                var m_useDefaultWindow = (*use_default_window) != 0;
 
-            if ((object)o_extraInfo != m_extraInfo)
-            {
-                *extra_info = m_extraInfo != null ? m_extraInfo.ToNative() : null;
-            }
-            
-            *use_default_window = m_useDefaultWindow ? 1 : 0;
+                var o_extraInfo = m_extraInfo;
+                var o_client = m_client;
 
-            m_windowInfo.Dispose();
-            m_settings.Dispose();
+                OnBeforeDevToolsPopup(m_browser, m_windowInfo, ref m_client, m_settings, ref m_extraInfo, ref m_useDefaultWindow);
+
+                if ((object)o_client != m_client && m_client != null)
+                {
+                    *client = m_client.ToNative();
+                }
+
+                if ((object)o_extraInfo != m_extraInfo)
+                {
+                    *extra_info = m_extraInfo != null ? m_extraInfo.ToNative() : null;
+                }
+
+                *use_default_window = m_useDefaultWindow ? 1 : 0;
+
+                m_windowInfo.Dispose();
+                m_settings.Dispose();
+            }
         }
 
         /// <summary>
@@ -190,9 +199,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            return DoClose(m_browser) ? 1 : 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                return DoClose(m_browser) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -311,9 +321,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnBeforeClose(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnBeforeClose(m_browser);
+            }
         }
 
         /// <summary>

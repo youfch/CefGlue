@@ -16,10 +16,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mSelectionRect = new CefRectangle(selectionRect->x, selectionRect->y, selectionRect->width, selectionRect->height);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mSelectionRect = new CefRectangle(selectionRect->x, selectionRect->y, selectionRect->width, selectionRect->height);
 
-            OnFindResult(mBrowser, identifier, count, mSelectionRect, activeMatchOrdinal, finalUpdate != 0);
+                OnFindResult(mBrowser, identifier, count, mSelectionRect, activeMatchOrdinal, finalUpdate != 0);
+            }
         }
 
         /// <summary>

@@ -16,15 +16,17 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-            var m_request = CefRequest.FromNative(request); // TODO dispose?
-            var m_userGesture = user_gesture != 0;
-            var m_isRedirect = is_redirect != 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            using (var m_request = CefRequest.FromNative(request))
+            {
+                var m_userGesture = user_gesture != 0;
+                var m_isRedirect = is_redirect != 0;
 
-            var result = OnBeforeBrowse(m_browser, m_frame, m_request, m_userGesture, m_isRedirect);
+                var result = OnBeforeBrowse(m_browser, m_frame, m_request, m_userGesture, m_isRedirect);
 
-            return result ? 1 : 0;
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -49,14 +51,16 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-            var m_targetUrl = cef_string_t.ToString(target_url);
-            var m_userGesture = user_gesture != 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            {
+                var m_targetUrl = cef_string_t.ToString(target_url);
+                var m_userGesture = user_gesture != 0;
 
-            var m_result = OnOpenUrlFromTab(m_browser, m_frame, m_targetUrl, target_disposition, m_userGesture);
+                var m_result = OnOpenUrlFromTab(m_browser, m_frame, m_targetUrl, target_disposition, m_userGesture);
 
-            return m_result ? 1 : 0;
+                return m_result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -85,19 +89,21 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNativeOrNull(browser);
-            var m_frame = CefFrame.FromNativeOrNull(frame);
-            var m_request = CefRequest.FromNative(request); // TODO dispose?
-            var m_isNavigation = is_navigation != 0;
-            var m_isDownload = is_download != 0;
-            var m_requestInitiator = cef_string_t.ToString(request_initiator);
-            var m_disableDefaultHandling = *disable_default_handling != 0;
+            using (var m_browser = CefBrowser.FromNativeOrNull(browser))
+            using (var m_frame = CefFrame.FromNativeOrNull(frame))
+            using (var m_request = CefRequest.FromNative(request))
+            {
+                var m_isNavigation = is_navigation != 0;
+                var m_isDownload = is_download != 0;
+                var m_requestInitiator = cef_string_t.ToString(request_initiator);
+                var m_disableDefaultHandling = *disable_default_handling != 0;
 
-            var m_result = GetResourceRequestHandler(m_browser, m_frame, m_request, m_isNavigation, m_isDownload, m_requestInitiator, ref m_disableDefaultHandling);
+                var m_result = GetResourceRequestHandler(m_browser, m_frame, m_request, m_isNavigation, m_isDownload, m_requestInitiator, ref m_disableDefaultHandling);
 
-            *disable_default_handling = m_disableDefaultHandling ? 1 : 0;
+                *disable_default_handling = m_disableDefaultHandling ? 1 : 0;
 
-            return m_result != null ? m_result.ToNative() : null;
+                return m_result != null ? m_result.ToNative() : null;
+            }
         }
 
         /// <summary>
@@ -122,16 +128,18 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_originUrl = cef_string_t.ToString(origin_url);
-            var m_host = cef_string_t.ToString(host);
-            var m_realm = cef_string_t.ToString(realm);
-            var m_scheme = cef_string_t.ToString(scheme);
-            var m_callback = CefAuthCallback.FromNative(callback);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_originUrl = cef_string_t.ToString(origin_url);
+                var m_host = cef_string_t.ToString(host);
+                var m_realm = cef_string_t.ToString(realm);
+                var m_scheme = cef_string_t.ToString(scheme);
+                var m_callback = CefAuthCallback.FromNative(callback);
 
-            var result = GetAuthCredentials(m_browser, m_originUrl, isProxy != 0, m_host, port, m_realm, m_scheme, m_callback);
+                var result = GetAuthCredentials(m_browser, m_originUrl, isProxy != 0, m_host, port, m_realm, m_scheme, m_callback);
 
-            return result ? 1 : 0;
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -156,14 +164,16 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_request_url = cef_string_t.ToString(request_url);
-            var m_ssl_info = CefSslInfo.FromNative(ssl_info); // TODO dispose?
-            var m_callback = CefCallback.FromNativeOrNull(callback);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_ssl_info = CefSslInfo.FromNative(ssl_info))
+            {
+                var m_request_url = cef_string_t.ToString(request_url);
+                var m_callback = CefCallback.FromNativeOrNull(callback);
 
-            var result = OnCertificateError(m_browser, cert_error, m_request_url, m_ssl_info, m_callback);
+                var result = OnCertificateError(m_browser, cert_error, m_request_url, m_ssl_info, m_callback);
 
-            return result ? 1 : 0;
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -184,26 +194,28 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_isProxy = isProxy != 0;
-            var m_host = cef_string_t.ToString(host);
-            var m_certCount = checked((int)certificatesCount);
-            var m_certificates = new CefX509Certificate[m_certCount];
-            for (var i = 0; i < m_certCount; i++)
+            using (var m_browser = CefBrowser.FromNative(browser))
             {
-                m_certificates[i] = CefX509Certificate.FromNative(certificates[i]);
-            }
-            var m_callback = CefSelectClientCertificateCallback.FromNative(callback);
+                var m_isProxy = isProxy != 0;
+                var m_host = cef_string_t.ToString(host);
+                var m_certCount = checked((int)certificatesCount);
+                var m_certificates = new CefX509Certificate[m_certCount];
+                for (var i = 0; i < m_certCount; i++)
+                {
+                    m_certificates[i] = CefX509Certificate.FromNative(certificates[i]);
+                }
+                var m_callback = CefSelectClientCertificateCallback.FromNative(callback);
 
-            var result = OnSelectClientCertificate(m_browser, m_isProxy, m_host, port, m_certificates, m_callback);
-            if (result)
-            {
-                return 1;
-            }
-            else
-            {
-                m_callback.Dispose();
-                return 0;
+                var result = OnSelectClientCertificate(m_browser, m_isProxy, m_host, port, m_certificates, m_callback);
+                if (result)
+                {
+                    return 1;
+                }
+                else
+                {
+                    m_callback.Dispose();
+                    return 0;
+                }
             }
         }
 
@@ -230,8 +242,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            OnRenderViewReady(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnRenderViewReady(m_browser);
+            }
         }
 
         /// <summary>
@@ -247,10 +261,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var error = cef_string_t.ToString(error_string);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var error = cef_string_t.ToString(error_string);
 
-            OnRenderProcessTerminated(m_browser, status, error_code, error);
+                OnRenderProcessTerminated(m_browser, status, error_code, error);
+            }
         }
 
         /// <summary>
@@ -269,10 +285,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_callback = CefUnresponsiveProcessCallback.FromNative(callback);
-            
-            return OnRenderProcessUnresponsive(m_browser, m_callback) ? 1 : 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_callback = CefUnresponsiveProcessCallback.FromNative(callback);
+
+                return OnRenderProcessUnresponsive(m_browser, m_callback) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -301,7 +319,10 @@
         private void on_render_process_responsive(cef_request_handler_t* self, cef_browser_t* browser)
         {
             CheckSelf(self);
-            OnRenderProcessResponsive(CefBrowser.FromNative(browser));
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnRenderProcessResponsive(m_browser);
+            }
         }
 
         /// <summary>
@@ -317,9 +338,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnDocumentAvailableInMainFrame(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnDocumentAvailableInMainFrame(m_browser);
+            }
         }
 
         /// <summary>

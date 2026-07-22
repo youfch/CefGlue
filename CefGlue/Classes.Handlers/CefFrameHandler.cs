@@ -81,9 +81,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-            OnFrameCreated(mBrowser, mFrame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            {
+                OnFrameCreated(mBrowser, mFrame);
+            }
         }
 
         /// <summary>
@@ -102,9 +104,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-            OnFrameDestroyed(mBrowser, mFrame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            {
+                OnFrameDestroyed(mBrowser, mFrame);
+            }
         }
         
         /// <summary>
@@ -123,9 +127,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-            OnFrameAttached(mBrowser, mFrame, reattached != 0);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            {
+                OnFrameAttached(mBrowser, mFrame, reattached != 0);
+            }
         }
 
         /// <summary>
@@ -144,9 +150,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-            OnFrameDetached(mBrowser, mFrame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            {
+                OnFrameDetached(mBrowser, mFrame);
+            }
         }
         
         /// <summary>
@@ -170,10 +178,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mOldFrame = CefFrame.FromNativeOrNull(old_frame);
-            var mNewFrame = CefFrame.FromNativeOrNull(new_frame);
-            OnMainFrameChanged(mBrowser, mOldFrame, mNewFrame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mOldFrame = CefFrame.FromNativeOrNull(old_frame))
+            using (var mNewFrame = CefFrame.FromNativeOrNull(new_frame))
+            {
+                OnMainFrameChanged(mBrowser, mOldFrame, mNewFrame);
+            }
         }
 
         /// <summary>

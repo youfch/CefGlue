@@ -34,20 +34,22 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_rect = new CefRectangle();
-
-            var result = GetRootScreenRect(m_browser, ref m_rect);
-
-            if (result)
+            using (var m_browser = CefBrowser.FromNative(browser))
             {
-                rect->x = m_rect.X;
-                rect->y = m_rect.Y;
-                rect->width = m_rect.Width;
-                rect->height = m_rect.Height;
-                return 1;
+                var m_rect = new CefRectangle();
+
+                var result = GetRootScreenRect(m_browser, ref m_rect);
+
+                if (result)
+                {
+                    rect->x = m_rect.X;
+                    rect->y = m_rect.Y;
+                    rect->width = m_rect.Width;
+                    rect->height = m_rect.Height;
+                    return 1;
+                }
+                else return 0;
             }
-            else return 0;
         }
 
         /// <summary>
@@ -66,15 +68,17 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            CefRectangle m_rect;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                CefRectangle m_rect;
 
-            GetViewRect(m_browser, out m_rect);
+                GetViewRect(m_browser, out m_rect);
 
-            rect->x = m_rect.X;
-            rect->y = m_rect.Y;
-            rect->width = m_rect.Width;
-            rect->height = m_rect.Height;
+                rect->x = m_rect.X;
+                rect->y = m_rect.Y;
+                rect->width = m_rect.Width;
+                rect->height = m_rect.Height;
+            }
         }
 
         /// <summary>
@@ -88,20 +92,21 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            int m_screenX = 0;
-            int m_screenY = 0;
-
-            var result = GetScreenPoint(m_browser, viewX, viewY, ref m_screenX, ref m_screenY);
-
-            if (result)
+            using (var m_browser = CefBrowser.FromNative(browser))
             {
-                *screenX = m_screenX;
-                *screenY = m_screenY;
-                return 1;
+                int m_screenX = 0;
+                int m_screenY = 0;
+
+                var result = GetScreenPoint(m_browser, viewX, viewY, ref m_screenX, ref m_screenY);
+
+                if (result)
+                {
+                    *screenX = m_screenX;
+                    *screenY = m_screenY;
+                    return 1;
+                }
+                else return 0;
             }
-            else return 0;
         }
 
         /// <summary>
@@ -120,15 +125,16 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_screenInfo = new CefScreenInfo(screen_info);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_screenInfo = new CefScreenInfo(screen_info);
 
-            var result = GetScreenInfo(m_browser, m_screenInfo);
+                var result = GetScreenInfo(m_browser, m_screenInfo);
 
-            m_screenInfo.Dispose();
-            m_browser.Dispose();
+                m_screenInfo.Dispose();
 
-            return result ? 1 : 0;
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -146,9 +152,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnPopupShow(m_browser, show != 0);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnPopupShow(m_browser, show != 0);
+            }
         }
 
         /// <summary>
@@ -164,10 +171,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_rect = new CefRectangle(rect->x, rect->y, rect->width, rect->height);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_rect = new CefRectangle(rect->x, rect->y, rect->width, rect->height);
 
-            OnPopupSize(m_browser, m_rect);
+                OnPopupSize(m_browser, m_rect);
+            }
         }
 
         /// <summary>
@@ -181,24 +190,25 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            // TODO: reuse arrays?
-            var m_dirtyRects = new CefRectangle[(int)dirtyRectsCount];
-
-            var count = (int)dirtyRectsCount;
-            var rect = dirtyRects;
-            for (var i = 0; i < count; i++)
+            using (var m_browser = CefBrowser.FromNative(browser))
             {
-                m_dirtyRects[i].X = rect->x;
-                m_dirtyRects[i].Y = rect->y;
-                m_dirtyRects[i].Width = rect->width;
-                m_dirtyRects[i].Height = rect->height;
+                // TODO: reuse arrays?
+                var m_dirtyRects = new CefRectangle[(int)dirtyRectsCount];
 
-                rect++;
+                var count = (int)dirtyRectsCount;
+                var rect = dirtyRects;
+                for (var i = 0; i < count; i++)
+                {
+                    m_dirtyRects[i].X = rect->x;
+                    m_dirtyRects[i].Y = rect->y;
+                    m_dirtyRects[i].Width = rect->width;
+                    m_dirtyRects[i].Height = rect->height;
+
+                    rect++;
+                }
+
+                OnPaint(m_browser, type, m_dirtyRects, (IntPtr)buffer, width, height);
             }
-
-            OnPaint(m_browser, type, m_dirtyRects, (IntPtr)buffer, width, height);
         }
 
         /// <summary>
@@ -219,25 +229,26 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            // TODO: reuse arrays?
-            var m_dirtyRects = new CefRectangle[(int)dirtyRectsCount];
-
-            var count = (int)dirtyRectsCount;
-            var rect = dirtyRects;
-            for (var i = 0; i < count; i++)
+            using (var m_browser = CefBrowser.FromNative(browser))
             {
-                m_dirtyRects[i].X = rect->x;
-                m_dirtyRects[i].Y = rect->y;
-                m_dirtyRects[i].Width = rect->width;
-                m_dirtyRects[i].Height = rect->height;
+                // TODO: reuse arrays?
+                var m_dirtyRects = new CefRectangle[(int)dirtyRectsCount];
 
-                rect++;
+                var count = (int)dirtyRectsCount;
+                var rect = dirtyRects;
+                for (var i = 0; i < count; i++)
+                {
+                    m_dirtyRects[i].X = rect->x;
+                    m_dirtyRects[i].Y = rect->y;
+                    m_dirtyRects[i].Width = rect->width;
+                    m_dirtyRects[i].Height = rect->height;
+
+                    rect++;
+                }
+                
+                var m_Info = CefAcceleratedPaintInfo.FromNative(info);
+                OnAcceleratedPaint(m_browser, type, m_dirtyRects, m_Info);
             }
-            
-            var m_Info = CefAcceleratedPaintInfo.FromNative(info);
-            OnAcceleratedPaint(m_browser, type, m_dirtyRects, m_Info);
         }
 
         /// <summary>
@@ -264,11 +275,13 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            CefSize mSize;
-            GetTouchHandleSize(mBrowser, orientation, out mSize);
-            size->width = mSize.Width;
-            size->height = mSize.Height;
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                CefSize mSize;
+                GetTouchHandleSize(mBrowser, orientation, out mSize);
+                size->width = mSize.Width;
+                size->height = mSize.Height;
+            }
         }
 
         /// <summary>
@@ -283,10 +296,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            // TODO: For CefGlue vNext structs should be passed by ref (`in` in this case),
-            // without copying, when possible.
-            OnTouchHandleStateChanged(mBrowser, new CefTouchHandleState(state));
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                // TODO: For CefGlue vNext structs should be passed by ref (`in` in this case),
+                // without copying, when possible.
+                OnTouchHandleStateChanged(mBrowser, new CefTouchHandleState(state));
+            }
         }
 
         /// <summary>
@@ -301,12 +316,13 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_dragData = CefDragData.FromNative(drag_data); // TODO dispose?
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_dragData = CefDragData.FromNative(drag_data))
+            {
+                var m_result = StartDragging(m_browser, m_dragData, allowed_ops, x, y);
 
-            var m_result = StartDragging(m_browser, m_dragData, allowed_ops, x, y);
-
-            return m_result ? 1 : 0;
+                return m_result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -332,9 +348,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            UpdateDragCursor(m_browser, operation);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                UpdateDragCursor(m_browser, operation);
+            }
         }
 
         /// <summary>
@@ -351,9 +368,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnScrollOffsetChanged(m_browser, x, y);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnScrollOffsetChanged(m_browser, x, y);
+            }
         }
 
         /// <summary>
@@ -368,30 +386,32 @@
 
             // TODO: reuse array/special list for rectange - this method called only from one thread and can be reused
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_selectedRange = new CefRange(selected_range->from, selected_range->to);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_selectedRange = new CefRange(selected_range->from, selected_range->to);
 
-            CefRectangle[] m_characterBounds;
-            if (character_boundsCount == UIntPtr.Zero)
-            {
-                m_characterBounds = s_emptyRectangleArray;
-            }
-            else
-            {
-                var m_characterBoundsCount = checked((int)character_boundsCount);
-                m_characterBounds = new CefRectangle[m_characterBoundsCount];
-                for (var i = 0; i < m_characterBoundsCount; i++)
+                CefRectangle[] m_characterBounds;
+                if (character_boundsCount == UIntPtr.Zero)
                 {
-                    m_characterBounds[i] = new CefRectangle(
-                        character_bounds[i].x,
-                        character_bounds[i].y,
-                        character_bounds[i].width,
-                        character_bounds[i].height
-                        );
+                    m_characterBounds = s_emptyRectangleArray;
                 }
-            }
+                else
+                {
+                    var m_characterBoundsCount = checked((int)character_boundsCount);
+                    m_characterBounds = new CefRectangle[m_characterBoundsCount];
+                    for (var i = 0; i < m_characterBoundsCount; i++)
+                    {
+                        m_characterBounds[i] = new CefRectangle(
+                            character_bounds[i].x,
+                            character_bounds[i].y,
+                            character_bounds[i].width,
+                            character_bounds[i].height
+                            );
+                    }
+                }
 
-            OnImeCompositionRangeChanged(m_browser, m_selectedRange, m_characterBounds);
+                OnImeCompositionRangeChanged(m_browser, m_selectedRange, m_characterBounds);
+            }
         }
 
         /// <summary>
@@ -406,11 +426,13 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_selected_text = cef_string_t.ToString(selected_text);
-            var m_selected_range = new CefRange(selected_range->from, selected_range->to);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_selected_text = cef_string_t.ToString(selected_text);
+                var m_selected_range = new CefRange(selected_range->from, selected_range->to);
 
-            OnTextSelectionChanged(m_browser, m_selected_text, m_selected_range);
+                OnTextSelectionChanged(m_browser, m_selected_text, m_selected_range);
+            }
         }
 
         /// <summary>
@@ -425,8 +447,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnVirtualKeyboardRequested(mBrowser, input_mode);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnVirtualKeyboardRequested(mBrowser, input_mode);
+            }
         }
 
         /// <summary>

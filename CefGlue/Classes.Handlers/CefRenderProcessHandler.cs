@@ -32,10 +32,11 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_extraInfo = CefDictionaryValue.FromNativeOrNull(extra_info);
-
-            OnBrowserCreated(m_browser, m_extraInfo);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_extraInfo = CefDictionaryValue.FromNativeOrNull(extra_info))
+            {
+                OnBrowserCreated(m_browser, m_extraInfo);
+            }
         }
 
         /// <summary>
@@ -55,9 +56,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnBrowserDestroyed(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnBrowserDestroyed(m_browser);
+            }
         }
 
         /// <summary>
@@ -90,11 +92,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-            var m_context = CefV8Context.FromNative(context);
-
-            OnContextCreated(m_browser, m_frame, m_context);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            using (var m_context = CefV8Context.FromNative(context))
+            {
+                OnContextCreated(m_browser, m_frame, m_context);
+            }
         }
 
         /// <summary>
@@ -113,11 +116,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-            var m_context = CefV8Context.FromNative(context);
-
-            OnContextReleased(m_browser, m_frame, m_context);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            using (var m_context = CefV8Context.FromNative(context))
+            {
+                OnContextReleased(m_browser, m_frame, m_context);
+            }
         }
 
         /// <summary>
@@ -133,13 +137,14 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-            var mContext = CefV8Context.FromNative(context);
-            var mException = CefV8Exception.FromNative(exception);
-            var mStackTrace = CefV8StackTrace.FromNative(stackTrace);
-
-            OnUncaughtException(mBrowser, mFrame, mContext, mException, mStackTrace);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            using (var mContext = CefV8Context.FromNative(context))
+            using (var mException = CefV8Exception.FromNative(exception))
+            using (var mStackTrace = CefV8StackTrace.FromNative(stackTrace))
+            {
+                OnUncaughtException(mBrowser, mFrame, mContext, mException, mStackTrace);
+            }
         }
 
         /// <summary>
@@ -156,13 +161,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-            var m_node = CefDomNode.FromNativeOrNull(node);
-
-            OnFocusedNodeChanged(m_browser, m_frame, m_node);
-
-            if (m_node != null) m_node.Dispose();
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            using (var m_node = CefDomNode.FromNativeOrNull(node))
+            {
+                OnFocusedNodeChanged(m_browser, m_frame, m_node);
+            }
         }
 
         /// <summary>
@@ -182,14 +186,15 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            {
+                // Client is responsible to call `Dispose()` on message when it no more needed.
+                var m_message = CefProcessMessage.FromNative(message);
 
-            // Client is responsible to call `Dispose()` on message when it no more needed.
-            var m_message = CefProcessMessage.FromNative(message);
-
-            var result = OnProcessMessageReceived(m_browser, m_frame, source_process, m_message);
-            return result ? 1 : 0;
+                var result = OnProcessMessageReceived(m_browser, m_frame, source_process, m_message);
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>

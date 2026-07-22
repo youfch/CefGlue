@@ -16,11 +16,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_result = OnDevToolsMessage(m_browser, (IntPtr)message, checked((int)message_size));
 
-            var m_result = OnDevToolsMessage(m_browser, (IntPtr)message, checked((int)message_size));
-
-            return m_result ? 1 : 0;
+                return m_result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -51,9 +52,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnDevToolsMethodResult(m_browser, message_id, success != 0, (IntPtr)result, checked((int)result_size));
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnDevToolsMethodResult(m_browser, message_id, success != 0, (IntPtr)result, checked((int)result_size));
+            }
         }
 
         /// <summary>
@@ -75,10 +77,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_method = cef_string_t.ToString(method);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_method = cef_string_t.ToString(method);
 
-            OnDevToolsEvent(m_browser, m_method, (IntPtr)@params, checked((int)params_size));
+                OnDevToolsEvent(m_browser, m_method, (IntPtr)@params, checked((int)params_size));
+            }
         }
 
         /// <summary>
@@ -96,9 +100,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnDevToolsAgentAttached(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnDevToolsAgentAttached(m_browser);
+            }
         }
 
         /// <summary>
@@ -113,9 +118,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnDevToolsAgentDetached(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnDevToolsAgentDetached(m_browser);
+            }
         }
 
         /// <summary>

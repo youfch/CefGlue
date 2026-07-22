@@ -16,8 +16,8 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
             using (var mState = CefContextMenuParams.FromNative(@params))
             using (var mModel = CefMenuModel.FromNative(model))
             {
@@ -41,8 +41,8 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
             using (var mParameters = CefContextMenuParams.FromNative(@params))
             using (var mModel = CefMenuModel.FromNative(model))
             {
@@ -71,8 +71,8 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
             using (var mState = CefContextMenuParams.FromNative(@params))
             {
                 var result = OnContextMenuCommand(mBrowser, mFrame, mState, command_id, event_flags);
@@ -99,10 +99,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-
-            OnContextMenuDismissed(mBrowser, mFrame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            {
+                OnContextMenuDismissed(mBrowser, mFrame);
+            }
         }
 
         /// <summary>
@@ -118,18 +119,20 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-            var mLocation = new CefPoint(location->x, location->y);
-            var mSize = new CefSize(size->width, size->height);
-            var mCallback = CefRunQuickMenuCallback.FromNative(callback);
-
-            var result = RunQuickMenu(mBrowser, mFrame, mLocation, mSize, edit_state_flags, mCallback);
-            if (!result)
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
             {
-                mCallback.Dispose();
+                var mLocation = new CefPoint(location->x, location->y);
+                var mSize = new CefSize(size->width, size->height);
+                var mCallback = CefRunQuickMenuCallback.FromNative(callback);
+
+                var result = RunQuickMenu(mBrowser, mFrame, mLocation, mSize, edit_state_flags, mCallback);
+                if (!result)
+                {
+                    mCallback.Dispose();
+                }
+                return result ? 1 : 0;
             }
-            return result ? 1 : 0;
         }
 
         /// <summary>
@@ -148,11 +151,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-
-            var result = OnQuickMenuCommand(mBrowser, mFrame, command_id, event_flags);
-            return result ? 1 : 0;
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            {
+                var result = OnQuickMenuCommand(mBrowser, mFrame, command_id, event_flags);
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -169,10 +173,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-
-            OnQuickMenuDismissed(mBrowser, mFrame);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            {
+                OnQuickMenuDismissed(mBrowser, mFrame);
+            }
         }
 
         /// <summary>

@@ -16,10 +16,12 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_url = cef_string_t.ToString(url);
-            var m_requestMethod = cef_string_t.ToString(request_method);
-            return CanDownload(m_browser, m_url, m_requestMethod) ? 1 : 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_url = cef_string_t.ToString(url);
+                var m_requestMethod = cef_string_t.ToString(request_method);
+                return CanDownload(m_browser, m_url, m_requestMethod) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -36,7 +38,7 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
             using (var m_download_item = CefDownloadItem.FromNative(download_item))
             {
                 var m_suggested_name = cef_string_t.ToString(suggested_name);
@@ -64,7 +66,7 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
             using (var m_download_item = CefDownloadItem.FromNative(download_item))
             {
                 var m_callback = CefDownloadItemCallback.FromNative(callback);

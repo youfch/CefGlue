@@ -16,17 +16,19 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mTitle = cef_string_t.ToString(title);
-            var mDefaultFilePath = cef_string_t.ToString(default_file_path);
-            var mAcceptFilters = cef_string_list.ToArray(accept_filters);
-            var mAcceptExtensions = cef_string_list.ToArray(accept_extensions);
-            var mAcceptDescriptions = cef_string_list.ToArray(accept_descriptions);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mTitle = cef_string_t.ToString(title);
+                var mDefaultFilePath = cef_string_t.ToString(default_file_path);
+                var mAcceptFilters = cef_string_list.ToArray(accept_filters);
+                var mAcceptExtensions = cef_string_list.ToArray(accept_extensions);
+                var mAcceptDescriptions = cef_string_list.ToArray(accept_descriptions);
 
-            var mCallback = CefFileDialogCallback.FromNative(callback);
+                var mCallback = CefFileDialogCallback.FromNative(callback);
 
-            var result = OnFileDialog(mBrowser, mode, mTitle, mDefaultFilePath, mAcceptFilters, mAcceptExtensions, mAcceptDescriptions, mCallback);
-            return result ? 1 : 0;
+                var result = OnFileDialog(mBrowser, mode, mTitle, mDefaultFilePath, mAcceptFilters, mAcceptExtensions, mAcceptDescriptions, mCallback);
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>

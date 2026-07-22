@@ -16,18 +16,20 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-            var mRequestingOrigin = cef_string_t.ToString(requesting_origin);
-            var mRequestedPermissions = (CefMediaAccessPermissionTypes)requested_permissions;
-            var mCallback = CefMediaAccessCallback.FromNative(callback);
-
-            var result = OnRequestMediaAccessPermission(mBrowser, mFrame, mRequestingOrigin, mRequestedPermissions, mCallback);
-            if (!result)
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
             {
-                mCallback.Dispose();
+                var mRequestingOrigin = cef_string_t.ToString(requesting_origin);
+                var mRequestedPermissions = (CefMediaAccessPermissionTypes)requested_permissions;
+                var mCallback = CefMediaAccessCallback.FromNative(callback);
+
+                var result = OnRequestMediaAccessPermission(mBrowser, mFrame, mRequestingOrigin, mRequestedPermissions, mCallback);
+                if (!result)
+                {
+                    mCallback.Dispose();
+                }
+                return result ? 1 : 0;
             }
-            return result ? 1 : 0;
         }
 
         /// <summary>
@@ -54,18 +56,20 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mRequestingOrigin = cef_string_t.ToString(requesting_origin);
-            var mRequestedPermissions = (CefPermissionRequestTypes)requested_permissions;
-            var mCallback = CefPermissionPromptCallback.FromNative(callback);
-
-            var result = OnShowPermissionPrompt(mBrowser, prompt_id, mRequestingOrigin,
-                mRequestedPermissions, mCallback);
-            if (!result)
+            using (var mBrowser = CefBrowser.FromNative(browser))
             {
-                mCallback.Dispose();
+                var mRequestingOrigin = cef_string_t.ToString(requesting_origin);
+                var mRequestedPermissions = (CefPermissionRequestTypes)requested_permissions;
+                var mCallback = CefPermissionPromptCallback.FromNative(callback);
+
+                var result = OnShowPermissionPrompt(mBrowser, prompt_id, mRequestingOrigin,
+                    mRequestedPermissions, mCallback);
+                if (!result)
+                {
+                    mCallback.Dispose();
+                }
+                return result ? 1 : 0;
             }
-            return result ? 1 : 0;
         }
 
         /// <summary>
@@ -89,8 +93,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnDismissPermissionPrompt(mBrowser, prompt_id, result);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnDismissPermissionPrompt(mBrowser, prompt_id, result);
+            }
         }
 
         /// <summary>

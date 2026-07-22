@@ -16,17 +16,19 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_origin_url = cef_string_t.ToString(origin_url);
-            var m_message_text = cef_string_t.ToString(message_text);
-            var m_default_prompt_text = cef_string_t.ToString(default_prompt_text);
-            var m_callback = CefJSDialogCallback.FromNative(callback);
-            bool m_suppress_message;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_origin_url = cef_string_t.ToString(origin_url);
+                var m_message_text = cef_string_t.ToString(message_text);
+                var m_default_prompt_text = cef_string_t.ToString(default_prompt_text);
+                var m_callback = CefJSDialogCallback.FromNative(callback);
+                bool m_suppress_message;
 
-            var result = OnJSDialog(m_browser, m_origin_url, dialog_type, m_message_text, m_default_prompt_text, m_callback, out m_suppress_message);
+                var result = OnJSDialog(m_browser, m_origin_url, dialog_type, m_message_text, m_default_prompt_text, m_callback, out m_suppress_message);
 
-            *suppress_message = m_suppress_message ? 1 : 0;
-            return result ? 1 : 0;
+                *suppress_message = m_suppress_message ? 1 : 0;
+                return result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -52,11 +54,13 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_message_text = cef_string_t.ToString(message_text);
-            var m_callback = CefJSDialogCallback.FromNative(callback);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_message_text = cef_string_t.ToString(message_text);
+                var m_callback = CefJSDialogCallback.FromNative(callback);
 
-            return OnBeforeUnloadDialog(m_browser, m_message_text, is_reload != 0, m_callback) ? 1 : 0;
+                return OnBeforeUnloadDialog(m_browser, m_message_text, is_reload != 0, m_callback) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -74,9 +78,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnResetDialogState(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnResetDialogState(m_browser);
+            }
         }
 
         /// <summary>
@@ -91,9 +96,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnDialogClosed(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnDialogClosed(m_browser);
+            }
         }
 
         /// <summary>

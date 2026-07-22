@@ -16,9 +16,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnTakeFocus(m_browser, next != 0);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnTakeFocus(m_browser, next != 0);
+            }
         }
 
         /// <summary>
@@ -36,9 +37,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            return OnSetFocus(m_browser, source) ? 1 : 0;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                return OnSetFocus(m_browser, source) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -56,9 +58,10 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-
-            OnGotFocus(m_browser);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                OnGotFocus(m_browser);
+            }
         }
 
         /// <summary>

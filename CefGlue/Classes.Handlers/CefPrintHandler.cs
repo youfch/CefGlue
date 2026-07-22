@@ -17,8 +17,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnPrintStart(mBrowser);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnPrintStart(mBrowser);
+            }
         }
 
         /// <summary>
@@ -36,12 +38,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
+            using (var mBrowser = CefBrowser.FromNative(browser))
             using (var m_settings = CefPrintSettings.FromNative(settings))
             {
                 OnPrintSettings(mBrowser, m_settings, get_defaults != 0);
             }
-                
         }
 
         /// <summary>
@@ -55,10 +56,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var m_callback = CefPrintDialogCallback.FromNative(callback);
-            var m_result = OnPrintDialog(mBrowser, has_selection != 0, m_callback);
-            return m_result ? 1 : 0;
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var m_callback = CefPrintDialogCallback.FromNative(callback);
+                var m_result = OnPrintDialog(mBrowser, has_selection != 0, m_callback);
+                return m_result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -72,14 +75,16 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var m_documentName = cef_string_t.ToString(document_name);
-            var m_pdfFilePath = cef_string_t.ToString(pdf_file_path);
-            var m_callback = CefPrintJobCallback.FromNative(callback);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var m_documentName = cef_string_t.ToString(document_name);
+                var m_pdfFilePath = cef_string_t.ToString(pdf_file_path);
+                var m_callback = CefPrintJobCallback.FromNative(callback);
 
-            var m_result = OnPrintJob(mBrowser, m_documentName, m_pdfFilePath, m_callback);
+                var m_result = OnPrintJob(mBrowser, m_documentName, m_pdfFilePath, m_callback);
 
-            return m_result ? 1 : 0;
+                return m_result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -94,8 +99,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnPrintReset(mBrowser);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnPrintReset(mBrowser);
+            }
         }
 
         /// <summary>
@@ -108,17 +115,18 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNativeOrNull(browser);
-
-            var m_result = GetPdfPaperSize(mBrowser, device_units_per_inch);
-
-            var n_result = new cef_size_t
+            using (var mBrowser = CefBrowser.FromNativeOrNull(browser))
             {
-                width = m_result.Width,
-                height = m_result.Height,
-            };
+                var m_result = GetPdfPaperSize(mBrowser, device_units_per_inch);
 
-            return n_result;
+                var n_result = new cef_size_t
+                {
+                    width = m_result.Width,
+                    height = m_result.Height,
+                };
+
+                return n_result;
+            }
         }
 
         /// <summary>

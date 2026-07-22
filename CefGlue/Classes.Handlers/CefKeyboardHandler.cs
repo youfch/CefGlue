@@ -16,20 +16,22 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_event = CefKeyEvent.FromNative(@event); // TODO dispose?
-            // TODO: wrap cef_event_handle_t (os_event)
-            IntPtr m_os_event = IntPtr.Zero;
-            if (os_event != IntPtr.Zero)
+            using (var m_browser = CefBrowser.FromNative(browser))
             {
+                var m_event = CefKeyEvent.FromNative(@event); // TODO dispose?
+                // TODO: wrap cef_event_handle_t (os_event)
+                IntPtr m_os_event = IntPtr.Zero;
+                if (os_event != IntPtr.Zero)
+                {
+                }
+
+                var m_is_keyboard_shortcut = *is_keyboard_shortcut != 0;
+
+                var result = OnPreKeyEvent(m_browser, m_event, m_os_event, out m_is_keyboard_shortcut);
+                *is_keyboard_shortcut = m_is_keyboard_shortcut ? 1 : 0;
+
+                return result ? 1 : 0;
             }
-
-            var m_is_keyboard_shortcut = *is_keyboard_shortcut != 0;
-
-            var result = OnPreKeyEvent(m_browser, m_event, m_os_event, out m_is_keyboard_shortcut);
-            *is_keyboard_shortcut = m_is_keyboard_shortcut ? 1 : 0;
-
-            return result ? 1 : 0;
         }
 
         /// <summary>
@@ -50,17 +52,19 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_event = CefKeyEvent.FromNative(@event); // TODO dispose?
-            // TODO: wrap cef_event_handle_t (os_event)
-            IntPtr m_os_event = IntPtr.Zero;
-            if (os_event != IntPtr.Zero)
+            using (var m_browser = CefBrowser.FromNative(browser))
             {
+                var m_event = CefKeyEvent.FromNative(@event); // TODO dispose?
+                // TODO: wrap cef_event_handle_t (os_event)
+                IntPtr m_os_event = IntPtr.Zero;
+                if (os_event != IntPtr.Zero)
+                {
+                }
+
+                var result = OnKeyEvent(m_browser, m_event, m_os_event);
+
+                return result ? 1 : 0;
             }
-
-            var result = OnKeyEvent(m_browser, m_event, m_os_event);
-
-            return result ? 1 : 0;
         }
 
         /// <summary>

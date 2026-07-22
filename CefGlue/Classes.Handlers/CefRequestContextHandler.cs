@@ -32,19 +32,21 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNativeOrNull(browser);
-            var m_frame = CefFrame.FromNativeOrNull(frame);
-            var m_request = CefRequest.FromNative(request); // TODO dispose?
-            var m_isNavigation = is_navigation != 0;
-            var m_isDownload = is_download != 0;
-            var m_requestInitiator = cef_string_t.ToString(request_initiator);
-            var m_disableDefaultHandling = *disable_default_handling != 0;
+            using (var m_browser = CefBrowser.FromNativeOrNull(browser))
+            using (var m_frame = CefFrame.FromNativeOrNull(frame))
+            using (var m_request = CefRequest.FromNative(request))
+            {
+                var m_isNavigation = is_navigation != 0;
+                var m_isDownload = is_download != 0;
+                var m_requestInitiator = cef_string_t.ToString(request_initiator);
+                var m_disableDefaultHandling = *disable_default_handling != 0;
 
-            var m_result = GetResourceRequestHandler(m_browser, m_frame, m_request, m_isNavigation, m_isDownload, m_requestInitiator, ref m_disableDefaultHandling);
+                var m_result = GetResourceRequestHandler(m_browser, m_frame, m_request, m_isNavigation, m_isDownload, m_requestInitiator, ref m_disableDefaultHandling);
 
-            *disable_default_handling = m_disableDefaultHandling ? 1 : 0;
+                *disable_default_handling = m_disableDefaultHandling ? 1 : 0;
 
-            return m_result != null ? m_result.ToNative() : null;
+                return m_result != null ? m_result.ToNative() : null;
+            }
         }
 
         /// <summary>

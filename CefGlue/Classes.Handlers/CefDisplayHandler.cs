@@ -16,11 +16,13 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mFrame = CefFrame.FromNative(frame);
-            var mUrl = cef_string_t.ToString(url);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            using (var mFrame = CefFrame.FromNative(frame))
+            {
+                var mUrl = cef_string_t.ToString(url);
 
-            OnAddressChange(mBrowser, mFrame, mUrl);
+                OnAddressChange(mBrowser, mFrame, mUrl);
+            }
         }
 
         /// <summary>
@@ -35,10 +37,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mTitle = cef_string_t.ToString(title);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mTitle = cef_string_t.ToString(title);
 
-            OnTitleChange(mBrowser, mTitle);
+                OnTitleChange(mBrowser, mTitle);
+            }
         }
 
         /// <summary>
@@ -53,10 +57,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mIconUrls = cef_string_list.ToArray(icon_urls);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mIconUrls = cef_string_list.ToArray(icon_urls);
 
-            OnFaviconUrlChange(mBrowser, mIconUrls);
+                OnFaviconUrlChange(mBrowser, mIconUrls);
+            }
         }
 
         /// <summary>
@@ -71,8 +77,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnFullscreenModeChange(mBrowser, fullscreen != 0);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnFullscreenModeChange(mBrowser, fullscreen != 0);
+            }
         }
 
         /// <summary>
@@ -93,10 +101,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mText = cef_string_t.ToString(text);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mText = cef_string_t.ToString(text);
 
-            return OnTooltip(mBrowser, mText) ? 1 : 0;
+                return OnTooltip(mBrowser, mText) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -117,10 +127,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mValue = cef_string_t.ToString(value);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mValue = cef_string_t.ToString(value);
 
-            OnStatusMessage(mBrowser, mValue);
+                OnStatusMessage(mBrowser, mValue);
+            }
         }
 
         /// <summary>
@@ -136,11 +148,13 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mMessage = cef_string_t.ToString(message);
-            var mSource = cef_string_t.ToString(source);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mMessage = cef_string_t.ToString(message);
+                var mSource = cef_string_t.ToString(source);
 
-            return OnConsoleMessage(mBrowser, level, mMessage, mSource, line) ? 1 : 0;
+                return OnConsoleMessage(mBrowser, level, mMessage, mSource, line) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -157,17 +171,19 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mNewSize = new CefSize(new_size->width, new_size->height);
-
-            if(OnAutoResize(mBrowser, ref mNewSize))
+            using (var mBrowser = CefBrowser.FromNative(browser))
             {
-                new_size->width = mNewSize.Width;
-                new_size->height = mNewSize.Height;
-                return 1;
-            }
+                var mNewSize = new CefSize(new_size->width, new_size->height);
 
-            return 0;
+                if(OnAutoResize(mBrowser, ref mNewSize))
+                {
+                    new_size->width = mNewSize.Width;
+                    new_size->height = mNewSize.Height;
+                    return 1;
+                }
+
+                return 0;
+            }
         }
 
         /// <summary>
@@ -186,8 +202,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnLoadingProgressChange(mBrowser, progress);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnLoadingProgressChange(mBrowser, progress);
+            }
         }
 
         /// <summary>
@@ -201,13 +219,15 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_cefCursorInfo = type == CefCursorType.Custom ? new CefCursorInfo(custom_cursor_info) : null;
+            using (var m_browser = CefBrowser.FromNative(browser))
+            {
+                var m_cefCursorInfo = type == CefCursorType.Custom ? new CefCursorInfo(custom_cursor_info) : null;
 
-            var m_result = OnCursorChange(m_browser, cursor, type, m_cefCursorInfo);
+                var m_result = OnCursorChange(m_browser, cursor, type, m_cefCursorInfo);
 
-            if (m_cefCursorInfo != null) m_cefCursorInfo.Dispose();
-            return m_result ? 1 : 0;
+                if (m_cefCursorInfo != null) m_cefCursorInfo.Dispose();
+                return m_result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -224,11 +244,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-
-            OnMediaAccessChange(mBrowser,
-                hasVideoAccess: has_video_access != 0,
-                hasAudioAccess: has_audio_access != 0);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnMediaAccessChange(mBrowser,
+                    hasVideoAccess: has_video_access != 0,
+                    hasAudioAccess: has_audio_access != 0);
+            }
         }
 
         /// <summary>
@@ -243,10 +264,12 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mNewBounds = new CefRectangle(new_bounds->x, new_bounds->y, new_bounds->width, new_bounds->height);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mNewBounds = new CefRectangle(new_bounds->x, new_bounds->y, new_bounds->width, new_bounds->height);
 
-            return OnContentsBoundsChange(mBrowser, mNewBounds) ? 1 : 0;
+                return OnContentsBoundsChange(mBrowser, mNewBounds) ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -263,19 +286,21 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mRect = new CefRectangle();
-
-            var result = GetRootWindowScreenRect(mBrowser, ref mRect);
-            if (result)
+            using (var mBrowser = CefBrowser.FromNative(browser))
             {
-                rect->x = mRect.X;
-                rect->y = mRect.Y;
-                rect->width = mRect.Width;
-                rect->height = mRect.Height;
-                return 1;
+                var mRect = new CefRectangle();
+
+                var result = GetRootWindowScreenRect(mBrowser, ref mRect);
+                if (result)
+                {
+                    rect->x = mRect.X;
+                    rect->y = mRect.Y;
+                    rect->width = mRect.Width;
+                    rect->height = mRect.Height;
+                    return 1;
+                }
+                return 0;
             }
-            return 0;
         }
 
         /// <summary>

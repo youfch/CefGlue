@@ -16,11 +16,13 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_dragData = CefDragData.FromNative(dragData); // TODO dispose?
-            var m_result = OnDragEnter(m_browser, m_dragData, mask);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_dragData = CefDragData.FromNative(dragData))
+            {
+                var m_result = OnDragEnter(m_browser, m_dragData, mask);
 
-            return m_result ? 1 : 0;
+                return m_result ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -38,21 +40,23 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-            CefDraggableRegion[] m_regions;
-            var m_count = (int)regionsCount;
-            if (m_count == 0) m_regions = EmptyDraggableRegion;
-            else
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
             {
-                m_regions = new CefDraggableRegion[m_count];
-                for (var i = 0; i < m_count; i++)
+                CefDraggableRegion[] m_regions;
+                var m_count = (int)regionsCount;
+                if (m_count == 0) m_regions = EmptyDraggableRegion;
+                else
                 {
-                    m_regions[i] = CefDraggableRegion.FromNative(regions + i); // TODO dispose?
+                    m_regions = new CefDraggableRegion[m_count];
+                    for (var i = 0; i < m_count; i++)
+                    {
+                        m_regions[i] = CefDraggableRegion.FromNative(regions + i); // TODO dispose?
+                    }
                 }
-            }
 
-            OnDraggableRegionsChanged(m_browser, m_frame, m_regions);
+                OnDraggableRegionsChanged(m_browser, m_frame, m_regions);
+            }
         }
 
         /// <summary>

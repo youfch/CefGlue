@@ -17,9 +17,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-
-            OnLoadingStateChange(mBrowser, isLoading != 0, canGoBack != 0, canGoForward != 0);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnLoadingStateChange(mBrowser, isLoading != 0, canGoBack != 0, canGoForward != 0);
+            }
         }
 
         /// <summary>
@@ -38,10 +39,11 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-
-            OnLoadStart(m_browser, m_frame, transition_type);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            {
+                OnLoadStart(m_browser, m_frame, transition_type);
+            }
         }
 
         /// <summary>
@@ -65,10 +67,11 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-
-            OnLoadEnd(m_browser, m_frame, httpStatusCode);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            {
+                OnLoadEnd(m_browser, m_frame, httpStatusCode);
+            }
         }
 
         /// <summary>
@@ -90,12 +93,14 @@
         {
             CheckSelf(self);
 
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_frame = CefFrame.FromNative(frame);
-            var m_errorText = cef_string_t.ToString(errorText);
-            var m_failedUrl = cef_string_t.ToString(failedUrl);
+            using (var m_browser = CefBrowser.FromNative(browser))
+            using (var m_frame = CefFrame.FromNative(frame))
+            {
+                var m_errorText = cef_string_t.ToString(errorText);
+                var m_failedUrl = cef_string_t.ToString(failedUrl);
 
-            OnLoadError(m_browser, m_frame, errorCode, m_errorText, m_failedUrl);
+                OnLoadError(m_browser, m_frame, errorCode, m_errorText, m_failedUrl);
+            }
         }
 
         /// <summary>

@@ -15,10 +15,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-
-            var mResult = GetAudioParameters(mBrowser, new CefAudioParameters(@params));
-            return mResult ? 1 : 0;
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mResult = GetAudioParameters(mBrowser, new CefAudioParameters(@params));
+                return mResult ? 1 : 0;
+            }
         }
 
         /// <summary>
@@ -34,8 +35,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnAudioStreamStarted(mBrowser, new CefAudioParameters(@params), channels);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnAudioStreamStarted(mBrowser, new CefAudioParameters(@params), channels);
+            }
         }
 
         /// <summary>
@@ -52,8 +55,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnAudioStreamPacket(mBrowser, (IntPtr)data, frames, pts);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnAudioStreamPacket(mBrowser, (IntPtr)data, frames, pts);
+            }
         }
 
         /// <summary>
@@ -73,8 +78,10 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            OnAudioStreamStopped(mBrowser);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                OnAudioStreamStopped(mBrowser);
+            }
         }
 
         /// <summary>
@@ -89,9 +96,11 @@
         {
             CheckSelf(self);
 
-            var mBrowser = CefBrowser.FromNative(browser);
-            var mMessage = cef_string_t.ToString(message);
-            OnAudioStreamError(mBrowser, mMessage);
+            using (var mBrowser = CefBrowser.FromNative(browser))
+            {
+                var mMessage = cef_string_t.ToString(message);
+                OnAudioStreamError(mBrowser, mMessage);
+            }
         }
 
         /// <summary>
