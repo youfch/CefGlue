@@ -148,7 +148,8 @@ namespace Xilium.CefGlue.Common.Shared.RendererProcessCommunication
             public string ObjectName;
             public string MemberName;
             public string ArgumentsAsJson;
-            
+            public byte[][] BinaryArguments;
+
             public CefProcessMessage ToCefProcessMessage()
             {
                 var message = CefProcessMessage.Create(Name);
@@ -158,6 +159,18 @@ namespace Xilium.CefGlue.Common.Shared.RendererProcessCommunication
                     arguments.SetString(1, ObjectName);
                     arguments.SetString(2, MemberName);
                     arguments.SetString(3, ArgumentsAsJson);
+
+                    if (BinaryArguments != null && BinaryArguments.Length > 0)
+                    {
+                        arguments.SetInt(4, BinaryArguments.Length);
+                        for (var i = 0; i < BinaryArguments.Length; i++)
+                        {
+                            using (var binary = CefBinaryValue.Create(BinaryArguments[i]))
+                            {
+                                arguments.SetBinary(5 + i, binary);
+                            }
+                        }
+                    }
                 }
                 return message;
             }
@@ -166,13 +179,29 @@ namespace Xilium.CefGlue.Common.Shared.RendererProcessCommunication
             {
                 using (var arguments = message.Arguments)
                 {
-                    return new NativeObjectCallRequest()
+                    var result = new NativeObjectCallRequest()
                     {
                         CallId = arguments.GetInt(0),
                         ObjectName = arguments.GetString(1),
                         MemberName = arguments.GetString(2),
                         ArgumentsAsJson = arguments.GetString(3),
                     };
+
+                    if (arguments.Count > 4)
+                    {
+                        var binaryCount = arguments.GetInt(4);
+                        var binaryArgs = new byte[binaryCount][];
+                        for (var i = 0; i < binaryCount; i++)
+                        {
+                            using (var binary = arguments.GetBinary(5 + i))
+                            {
+                                binaryArgs[i] = binary.ToArray();
+                            }
+                        }
+                        result.BinaryArguments = binaryArgs;
+                    }
+
+                    return result;
                 }
             }
         }

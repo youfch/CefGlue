@@ -47,6 +47,21 @@ namespace CefGlue.Tests.Javascript
             {
                 return new object[] { fixedParam, optionalParams };
             }
+
+            public byte[] MethodWithBinaryParam(byte[] data)
+            {
+                return data;
+            }
+
+            public object[] MethodWithBinaryAndStringParam(string text, byte[] data)
+            {
+                return new object[] { text, data };
+            }
+
+            public object[] MethodWithTwoBinaryParams(byte[] first, byte[] second)
+            {
+                return new object[] { first, second };
+            }
         }
 
         private NativeTestObject nativeTestObject = new NativeTestObject();
@@ -158,6 +173,80 @@ namespace CefGlue.Tests.Javascript
             Assert.AreEqual(2, result.Length);
             Assert.AreEqual(Arg1, result[0]);
             Assert.AreEqual(0, ((int[]) result[1]).Length);
+        }
+
+        // ---- Binary parameter tests ----
+
+        [Test]
+        public void MethodWithBinaryParamIsExecuted()
+        {
+            var data = new byte[] { 0, 1, 2, 255 };
+            var argsJson = "[\"__BINARY_0__\"]";
+            byte[][] binaryArgs = new byte[][] { data };
+
+            object result = null;
+            Exception exception = null;
+            nativeObject.ExecuteMethod("methodWithBinaryParam", argsJson, binaryArgs, (r, e) => { result = r; exception = e; });
+            if (exception != null) throw exception;
+
+            CollectionAssert.AreEqual(data, (IEnumerable)result);
+        }
+
+        [Test]
+        public void MethodWithBinaryAndStringParamIsExecuted()
+        {
+            var data = new byte[] { 10, 20, 30 };
+            var argsJson = "[\"text\",\"__BINARY_0__\"]";
+            byte[][] binaryArgs = new byte[][] { data };
+
+            object result = null;
+            Exception exception = null;
+            nativeObject.ExecuteMethod("methodWithBinaryAndStringParam", argsJson, binaryArgs, (r, e) => { result = r; exception = e; });
+            if (exception != null) throw exception;
+
+            var arr = (object[])result;
+            Assert.AreEqual("text", arr[0]);
+            CollectionAssert.AreEqual(data, (IEnumerable)arr[1]);
+        }
+
+        [Test]
+        public void MethodWithTwoBinaryParamsIsExecuted()
+        {
+            var first = new byte[] { 1, 2, 3 };
+            var second = new byte[] { 4, 5, 6 };
+            var argsJson = "[\"__BINARY_0__\",\"__BINARY_1__\"]";
+            byte[][] binaryArgs = new byte[][] { first, second };
+
+            object result = null;
+            Exception exception = null;
+            nativeObject.ExecuteMethod("methodWithTwoBinaryParams", argsJson, binaryArgs, (r, e) => { result = r; exception = e; });
+            if (exception != null) throw exception;
+
+            var arr = (object[])result;
+            CollectionAssert.AreEqual(first, (IEnumerable)arr[0]);
+            CollectionAssert.AreEqual(second, (IEnumerable)arr[1]);
+        }
+
+        [Test]
+        public void MethodWithEmptyJsonStringIsExecuted()
+        {
+            // 模拟无参数调用时 ArgumentsAsJson 为 "" 的场景
+            object result = null;
+            Exception exception = null;
+            nativeObject.ExecuteMethod("methodWithReturn", "", (r, e) => { result = r; exception = e; });
+            if (exception != null) throw exception;
+            Assert.AreEqual(nativeTestObject.MethodWithReturn(), result);
+        }
+
+        [Test]
+        public void MethodWithNullJsonStringIsExecuted()
+        {
+            // 模拟极端情况：ArgumentsAsJson 为 null
+            object result = null;
+            Exception exception = null;
+            nativeObject.ExecuteMethod("methodWithReturn", (string)null, (r, e) => { result = r; exception = e; });
+            if (exception != null) throw exception;
+            Assert.AreEqual(nativeTestObject.MethodWithReturn(), result);
         }
     }
 }

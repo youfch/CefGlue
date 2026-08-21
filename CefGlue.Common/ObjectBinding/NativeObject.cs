@@ -41,6 +41,11 @@ namespace Xilium.CefGlue.Common.ObjectBinding
             InnerExecuteMethod(methodName, argsAsJson, handleResult);
         }
 
+        public void ExecuteMethod(string methodName, string argsAsJson, byte[][] binaryArgs, Action<object, Exception> handleResult)
+        {
+            InnerExecuteMethod(methodName, argsAsJson, binaryArgs, handleResult);
+        }
+
         private void InnerExecuteMethod<T>(string methodName, T args, Action<object, Exception> handleResult)
         {
             if (!_methods.TryGetValue(methodName ?? "", out var method))
@@ -56,6 +61,42 @@ namespace Xilium.CefGlue.Common.ObjectBinding
             }
 
             var innerMethod = method.MakeDelegate(_target, args);
+            _methodHandler.Execute(_methodHandlerTarget, innerMethod, (result, exception) =>
+            {
+                if (result is Task task)
+                {
+                    task.ContinueWith(t =>
+                    {
+                        var taskResult = GenericTaskAwaiter.GetResultFrom(t);
+                        handleResult(taskResult.Result, taskResult.Exception);
+                    });
+                    return;
+                }
+
+                handleResult(result, exception);
+            });
+        }
+
+        /// <summary>
+        /// 执行方法，支持二进制参数（原生 SetBinary 传输）。
+        /// </summary>
+        private void InnerExecuteMethod(string methodName, string argsAsJson, byte[][] binaryArgs, Action<object, Exception> handleResult)
+        {
+            if (!_methods.TryGetValue(methodName ?? "", out var method))
+            {
+                handleResult(default, new Exception($"Object does not have a {methodName} method."));
+                return;
+            }
+
+            if (_methodHandler == null)
+            {
+                method.Execute(_target, argsAsJson, binaryArgs, handleResult);
+                return;
+            }
+
+            // 如果用户自定义了 methodHandler，需要先将二进制参数注入 JSON 再让 handler 处理
+            var replacedJson = NativeMethod.ReplaceBinaryPlaceholders(argsAsJson, binaryArgs);
+            var innerMethod = method.MakeDelegate(_target, replacedJson);
             _methodHandler.Execute(_methodHandlerTarget, innerMethod, (result, exception) =>
             {
                 if (result is Task task)

@@ -68,9 +68,10 @@ if (!$GlobalObjectName$) {
             const pendingRefs = new Map();
             return isString(result) ? JSON.parse(result, (name, value) => revive(name, value, refs, pendingRefs)) : result;
         }
-        function objectsStringifier(skipReferenceForInitialArrayObject) {
+        function objectsStringifier(skipReferenceForInitialArrayObject, binaryCaptureCallback) {
             const refs = new Map();
             const marker = Symbol("marker");
+            let binaryCounter = 0;
             return function (key, value) {
                 if (value === null || value === undefined) {
                     return value;
@@ -91,6 +92,12 @@ if (!$GlobalObjectName$) {
                         return "$StringMarker$" + value;
                     case "object":
                         if (value instanceof Uint8Array) {
+                            if (typeof binaryCaptureCallback === "function") {
+                                // 新路径：捕获二进制数据，标记占位符，由 V8 handler 通过 SetBinary 原生传输
+                                binaryCaptureCallback(value);
+                                return `__BINARY_${binaryCounter++}__`;
+                            }
+                            // 旧路径：向后兼容，仍用 base64+marker
                             return "$BinaryMarker$" + convertBinaryToBase64(value);
                         }
                         if (Reflect.has(value, marker)) {
@@ -152,8 +159,17 @@ if (!$GlobalObjectName$) {
                             return targetValue;
                         }
                         const interceptor = function (...args) {
-                            const convertedArgs = args.length === 0 ? args : [JSON.stringify(args, objectsStringifier(/*skipReferenceForInitialArrayObject*/true))];
-                            return targetValue.apply(target, convertedArgs);
+                            if (args.length === 0) return targetValue.apply(target, args);
+
+                            const binaryArgs = [];
+                            const replacer = objectsStringifier(/*skipReferenceForInitialArrayObject*/true, (b) => binaryArgs.push(b));
+                            const jsonStr = JSON.stringify(args, replacer);
+
+                            if (binaryArgs.length > 0) {
+                                // 有二进制参数：JSON 在前，原始 Uint8Array 在后
+                                return targetValue.apply(target, [jsonStr, ...binaryArgs]);
+                            }
+                            return targetValue.apply(target, [jsonStr]);
                         };
                         functionsMap.set(propKey, interceptor);
                         return interceptor;

@@ -31,13 +31,26 @@ namespace Xilium.CefGlue.Common.ObjectBinding
                 return;
             }
 
-            nativeObject.ExecuteMethod(message.MemberName, message.ArgumentsAsJson, (result, exception) =>
+            if (message.BinaryArguments != null && message.BinaryArguments.Length > 0)
             {
-                using (CefObjectTracker.StartTracking())
+                nativeObject.ExecuteMethod(message.MemberName, message.ArgumentsAsJson, message.BinaryArguments, (result, exception) =>
                 {
-                    SendResult(callId, result, exception?.Message, frame);
-                }
-            });
+                    using (CefObjectTracker.StartTracking())
+                    {
+                        SendResult(callId, result, exception?.Message, frame);
+                    }
+                });
+            }
+            else
+            {
+                nativeObject.ExecuteMethod(message.MemberName, message.ArgumentsAsJson, (result, exception) =>
+                {
+                    using (CefObjectTracker.StartTracking())
+                    {
+                        SendResult(callId, result, exception?.Message, frame);
+                    }
+                });
+            }
         }
 
         private static void SendResult(int callId, object result, string exceptionMessage, CefFrame frame)

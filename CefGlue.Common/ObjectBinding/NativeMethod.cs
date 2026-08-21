@@ -42,6 +42,15 @@ namespace Xilium.CefGlue.Common.ObjectBinding
             Execute(targetObj, ConvertArguments(args), handleResult);
         }
 
+        /// <summary>
+        /// 执行方法，支持二进制参数（通过 __BINARY_N__ 占位符替换）。
+        /// </summary>
+        public void Execute(object targetObj, string argsJson, byte[][] binaryArgs, Action<object, Exception> handleResult)
+        {
+            var replacedJson = ReplaceBinaryPlaceholders(argsJson, binaryArgs);
+            Execute(targetObj, replacedJson, handleResult);
+        }
+
         public void Execute(object targetObj, Func<object> innerMethod, Action<object, Exception> handleResult)
         {
             Execute(targetObj, new[] { innerMethod }, handleResult);
@@ -112,6 +121,28 @@ namespace Xilium.CefGlue.Common.ObjectBinding
             var originalArguments = Deserializer.Deserialize(args, _parameterTypes);
 
             return ConvertArgumentsWithOptionals(originalArguments);
+        }
+
+        /// <summary>
+        /// 将 JSON 中的 __BINARY_N__ 占位符替换为 B<base64> 格式，供 Deserializer 处理。
+        /// 注意：base64 仅在 Common 进程内使用，跨进程传输已通过 SetBinary 走原生二进制。
+        /// </summary>
+        internal static string ReplaceBinaryPlaceholders(string argsJson, byte[][] binaryArgs)
+        {
+            if (binaryArgs == null || binaryArgs.Length == 0 || string.IsNullOrEmpty(argsJson))
+                return argsJson;
+
+            // 检查是否包含占位符，避免不必要的替换
+            if (!argsJson.Contains("__BINARY_"))
+                return argsJson;
+
+            for (int i = 0; i < binaryArgs.Length; i++)
+            {
+                var placeholder = $"\"__BINARY_{i}__\"";
+                var replacement = $"\"B{Convert.ToBase64String(binaryArgs[i])}\"";
+                argsJson = argsJson.Replace(placeholder, replacement);
+            }
+            return argsJson;
         }
 
         private object[] ConvertArgumentsWithOptionals(object[] originalArguments)
