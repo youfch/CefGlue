@@ -44,11 +44,12 @@ namespace Xilium.CefGlue.Common.ObjectBinding
 
         /// <summary>
         /// 执行方法，支持二进制参数（通过 __BINARY_N__ 占位符替换）。
+        /// 将占位符替换为 null 走 JSON 反序列化，再注入真实 byte[]，避免 base64 编解码。
         /// </summary>
         public void Execute(object targetObj, string argsJson, byte[][] binaryArgs, Action<object, Exception> handleResult)
         {
-            var replacedJson = ReplaceBinaryPlaceholders(argsJson, binaryArgs);
-            Execute(targetObj, replacedJson, handleResult);
+            var args = InnerConvertArguments(argsJson, binaryArgs);
+            Execute(targetObj, args, handleResult);
         }
 
         public void Execute(object targetObj, Func<object> innerMethod, Action<object, Exception> handleResult)
@@ -124,15 +125,67 @@ namespace Xilium.CefGlue.Common.ObjectBinding
         }
 
         /// <summary>
-        /// 将 JSON 中的 __BINARY_N__ 占位符替换为 B<base64> 格式，供 Deserializer 处理。
-        /// 注意：base64 仅在 Common 进程内使用，跨进程传输已通过 SetBinary 走原生二进制。
+        /// 反序列化 JSON 参数，并将 __BINARY_N__ 占位符替换为真实 byte[] 数据。
+        /// 避免 base64 编解码：将占位符替换为 null 走 JSON 反序列化，再注入真实 byte[]。
+        /// </summary>
+        private object[] InnerConvertArguments(string args, byte[][] binaryArgs)
+        {
+            if (string.IsNullOrEmpty(args))
+            {
+                var convertedArguments = Array.Empty<object>();
+                ValidateMandatoryArguments(convertedArguments);
+                return convertedArguments;
+            }
+
+            // 将 __BINARY_N__ 占位符替换为 null，避免 base64 编解码
+            var cleanedJson = ReplaceBinaryPlaceholders(args, binaryArgs);
+            var originalArguments = Deserializer.Deserialize(cleanedJson, _parameterTypes);
+
+            // 将 null 替换为真实的 byte[] 数据（按占位符出现顺序注入）
+            if (binaryArgs != null && binaryArgs.Length > 0)
+            {
+                int binaryIdx = 0;
+                for (int i = 0; i < originalArguments.Length && binaryIdx < binaryArgs.Length; i++)
+                {
+                    if (originalArguments[i] == null)
+                    {
+                        originalArguments[i] = binaryArgs[binaryIdx++];
+                    }
+                }
+            }
+
+            return ConvertArgumentsWithOptionals(originalArguments);
+        }
+
+        /// <summary>
+        /// 将 JSON 中的 __BINARY_N__ 占位符替换为 null，用于无 base64 的二进制参数注入路径。
+        /// 替换后由调用方在反序列化结果中注入真实 byte[] 数据。
         /// </summary>
         internal static string ReplaceBinaryPlaceholders(string argsJson, byte[][] binaryArgs)
         {
             if (binaryArgs == null || binaryArgs.Length == 0 || string.IsNullOrEmpty(argsJson))
                 return argsJson;
 
-            // 检查是否包含占位符，避免不必要的替换
+            if (!argsJson.Contains("__BINARY_"))
+                return argsJson;
+
+            for (int i = 0; i < binaryArgs.Length; i++)
+            {
+                var placeholder = $"\"__BINARY_{i}__\"";
+                argsJson = argsJson.Replace(placeholder, "null");
+            }
+            return argsJson;
+        }
+
+        /// <summary>
+        /// 将 JSON 中的 __BINARY_N__ 占位符替换为 B&lt;base64&gt; 格式。
+        /// 仅在 _methodHandler 路径中使用（MakeDelegate 闭包需要数据嵌入 JSON）。
+        /// </summary>
+        internal static string ReplaceBinaryPlaceholdersWithBase64(string argsJson, byte[][] binaryArgs)
+        {
+            if (binaryArgs == null || binaryArgs.Length == 0 || string.IsNullOrEmpty(argsJson))
+                return argsJson;
+
             if (!argsJson.Contains("__BINARY_"))
                 return argsJson;
 

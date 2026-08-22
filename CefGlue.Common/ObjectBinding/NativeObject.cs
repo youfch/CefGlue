@@ -94,8 +94,8 @@ namespace Xilium.CefGlue.Common.ObjectBinding
                 return;
             }
 
-            // 如果用户自定义了 methodHandler，需要先将二进制参数注入 JSON 再让 handler 处理
-            var replacedJson = NativeMethod.ReplaceBinaryPlaceholders(argsAsJson, binaryArgs);
+            // 如果用户自定义了 methodHandler，需要先将二进制参数以 base64 注入 JSON（MakeDelegate 闭包需要数据嵌入在 JSON 中）
+            var replacedJson = NativeMethod.ReplaceBinaryPlaceholdersWithBase64(argsAsJson, binaryArgs);
             var innerMethod = method.MakeDelegate(_target, replacedJson);
             _methodHandler.Execute(_methodHandlerTarget, innerMethod, (result, exception) =>
             {
